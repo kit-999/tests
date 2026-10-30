@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tests.kitsparkles.com/sitemap.xml

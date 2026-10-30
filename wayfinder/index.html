@@ -1,0 +1,1415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="canonical" href="https://tests.kitsparkles.com/wayfinder/">
+<meta name="description" content="Wayfinder, a values type test: sort 81 values, choose between your closest calls, and get your top 5, a type, and where you stand on 21 hills.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 14s-5.5-3.4-5.5-7.2A3 3 0 0 1 8 4.9a3 3 0 0 1 5.5 1.9C13.5 10.6 8 14 8 14z' fill='%23d6336c'/%3E%3C/svg%3E">
+<title>Wayfinder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one column, cards for questions, a bottom bar for Back/Next. Hearts are pink, hills are green, the type card is ink. */
+:root {
+  --bg: #f5f1fa; --card: #ffffff; --ink: #241a3a; --muted: #6c6383; --line: #e2dbec;
+  --heart: #d6336c; --heart-soft: #fde4ee; --hill: #2f7d5c; --hill-soft: #dff1e7; --them: #3d6fd6; --them-soft: #e2eafb;
+  --type-bg: #241a3a; --type-ink: #fdf8ff; --type-muted: #cbbfe0;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141019; --card: #1d1726; --ink: #efe9f7; --muted: #a99fbd; --line: #352c45;
+    --heart: #ff7aa8; --heart-soft: #3b1f2d; --hill: #6cc79b; --hill-soft: #1b3328; --them: #8fb1ff; --them-soft: #1c2742;
+    --type-bg: #2b2140; --type-ink: #fdf8ff; --type-muted: #cbbfe0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141019; --card: #1d1726; --ink: #efe9f7; --muted: #a99fbd; --line: #352c45;
+  --heart: #ff7aa8; --heart-soft: #3b1f2d; --hill: #6cc79b; --hill-soft: #1b3328; --them: #8fb1ff; --them-soft: #1c2742;
+  --type-bg: #2b2140; --type-ink: #fdf8ff; --type-muted: #cbbfe0; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+#app { max-width: 680px; margin: 0 auto; }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; line-height: 1.1; margin: 0; }
+h1 { font-size: clamp(40px, 10vw, 64px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 26px; font-weight: 800; }
+h3 { font-size: 20px; font-weight: 700; }
+h4 { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+h1:focus, h2:focus { outline: none; }
+p { margin: 0; }
+section { display: grid; gap: 16px; }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.eyebrow.heart { color: var(--heart); } .eyebrow.hill { color: var(--hill); }
+.lede { font-size: 19px; max-width: 60ch; }
+.sub, .note, .rule { color: var(--muted); max-width: 60ch; }
+.rule { font-size: 14px; }
+.amp { color: var(--heart); font-weight: 500; }
+.intro { padding-top: 24px; gap: 20px; }
+.facts { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.facts li { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; display: flex; gap: 6px; align-items: baseline; }
+.facts b { font-family: var(--display); font-size: 20px; }
+.row-btns { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn { font: 700 16px var(--body); border-radius: 999px; padding: 11px 20px; border: 2px solid var(--ink); background: var(--card); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.big { font-size: 19px; padding: 14px 30px; }
+.btn.ghost { border-color: transparent; background: transparent; text-decoration: underline; text-underline-offset: 3px; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.resetbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 40px; padding-top: 12px; border-top: 1px solid var(--line); }
+.resetbar .btn { font-size: 14px; padding: 8px 12px; color: var(--muted); }
+button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--heart); outline-offset: 2px; }
+.progress { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--heart); border-radius: 999px; transition: width 0.3s; }
+.items { display: grid; gap: 12px; }
+.item { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; }
+.stmt { font-size: 19px; font-weight: 700; font-family: var(--display); line-height: 1.25; }
+.scale5 { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 0 2px; }
+.dot5 { border-radius: 50%; border: 2px solid var(--heart); background: transparent; cursor: pointer; padding: 0; flex: none; transition: transform 0.1s, background 0.1s; }
+.dot5.s0 { width: 26px; height: 26px; } .dot5.s1 { width: 32px; height: 32px; } .dot5.s2 { width: 38px; height: 38px; }
+.dot5.s3 { width: 44px; height: 44px; } .dot5.s4 { width: 50px; height: 50px; }
+.dot5[aria-checked="true"] { background: var(--heart); transform: scale(1.08); box-shadow: 0 0 0 4px var(--heart-soft); }
+.ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.hillbox .q { font-family: var(--display); font-weight: 700; font-size: 19px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.hnum { font: 700 12px var(--body); color: var(--muted); letter-spacing: 0.04em; }
+.stops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; position: relative; }
+.stops::before { content: ""; position: absolute; left: 16.6%; right: 16.6%; top: 15px; height: 3px; background: var(--hill-soft); border-radius: 3px; }
+.stop { position: relative; display: grid; justify-items: center; gap: 6px; text-align: center; background: none; border: 0; color: var(--ink); font: 15px/1.3 var(--body); cursor: pointer; padding: 4px 2px; border-radius: 10px; }
+.stop .dot { width: 24px; height: 24px; border-radius: 50%; background: var(--card); border: 3px solid var(--hill); }
+.stop[aria-checked="true"] .dot { background: var(--hill); box-shadow: 0 0 0 5px var(--hill-soft); }
+.stop[aria-checked="true"] .lab { text-decoration: underline 2px var(--hill); text-underline-offset: 4px; }   /* not bold: bold rewraps and the row jumps */
+.hilltools { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pass, .die { font: 700 14px var(--body); border-radius: 999px; padding: 6px 12px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+.pass[aria-pressed="true"] { background: var(--line); color: var(--ink); }
+.die[aria-pressed="true"] { background: var(--hill); border-color: var(--hill); color: var(--bg); }
+.die:disabled { opacity: 0.4; cursor: not-allowed; }
+.nav { position: sticky; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--bg) 75%, transparent); }
+.count { color: var(--muted); font-size: 14px; text-align: center; flex: 1; }
+.slots { list-style: none; counter-reset: slot; padding: 0; margin: 0; display: grid; gap: 8px; }
+.slot { counter-increment: slot; display: flex; align-items: center; gap: 10px; background: var(--card); border: 2px solid var(--heart); border-radius: 12px; padding: 10px 12px; min-height: 52px; }
+.slot::before { content: counter(slot); font: 800 20px var(--display); color: var(--heart); width: 20px; }
+.slot.empty { border-style: dashed; border-color: var(--line); }
+.slot.empty::before { color: var(--muted); }
+.slot b { flex: 1; }
+.hint { color: var(--muted); font-size: 14px; }
+.tools { display: flex; gap: 4px; }
+.mini { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; font-size: 14px; }
+.mini:disabled { opacity: 0.3; cursor: default; }
+.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.chip { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; color: var(--ink); cursor: pointer; display: grid; gap: 2px; font: 15px/1.3 var(--body); }
+.chip span { color: var(--muted); font-size: 13px; }
+.chip[aria-pressed="true"] { border-color: var(--heart); background: var(--heart-soft); }
+.chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.more summary { cursor: pointer; color: var(--muted); font-weight: 700; padding: 6px 0; }
+.more .chips { margin-top: 8px; }
+.results { gap: 28px; }
+.typecard { background: var(--type-bg); color: var(--type-ink); border-radius: 20px; padding: 28px 22px; display: grid; gap: 10px; }
+.typecard .eyebrow { color: var(--type-muted); }
+.typecard h1 { font-size: clamp(36px, 9vw, 56px); }
+.tline { font-size: 20px; }
+.tfrom { color: var(--type-muted); }
+/* draft 5: a close call shows both types inside the card and asks; a pick says so, with a way to change it */
+.pick-row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 6px; }
+.pick-opt { border: 1px solid color-mix(in srgb, var(--type-ink) 28%, transparent); border-radius: 14px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.pick-opt h2 { font-size: clamp(26px, 6vw, 34px); }
+.pick-opt .btn { justify-self: start; margin-top: 4px; }
+.typecard .btn.ghost { color: var(--type-ink); padding: 4px 6px; font-size: 15px; }
+.block { gap: 12px; }
+.top { margin: 0; padding: 0; list-style: none; counter-reset: top; display: grid; gap: 10px; }
+.top li { counter-increment: top; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 14px 52px; position: relative; display: grid; gap: 2px; }
+.top li::before { content: counter(top); position: absolute; left: 16px; top: 12px; font: 800 26px var(--display); color: var(--heart); }
+.top b { font-family: var(--display); font-size: 20px; }
+.vline { color: var(--muted); font-size: 14px; }
+.bottom { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.bars { display: grid; gap: 8px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 3.2em; gap: 10px; align-items: center; font-size: 15px; }
+.bar-track { position: relative; height: 14px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--muted); opacity: 0.7; }
+.bar-row.lead .bar { background: var(--heart); opacity: 1; }
+.bar-row.lead .bar-name { color: var(--heart); font-weight: 700; }
+.bar-num { font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); }
+.word { color: var(--heart); }
+.group { display: grid; gap: 10px; margin-top: 6px; }
+.stance { display: grid; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line); }
+.stance .q { font-weight: 700; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.badge { font-size: 12px; font-weight: 700; color: var(--bg); background: var(--hill); border-radius: 999px; padding: 1px 8px; }
+.passed { color: var(--muted); font-style: italic; font-size: 14px; }
+.leans { color: var(--hill); font-size: 13px; margin: 6px 0 0; }
+.why { margin: 10px 0 14px; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+.track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; position: relative; }
+.track::before { content: ""; position: absolute; left: 16.6%; right: 16.6%; top: 7px; height: 2px; background: var(--line); }
+.tstop { position: relative; display: grid; justify-items: center; gap: 4px; text-align: center; font-size: 13px; color: var(--muted); }
+.tdot { width: 16px; height: 16px; border-radius: 50%; background: var(--card); border: 2px solid var(--line); }
+.tstop.me .tdot { background: var(--hill); border-color: var(--hill); }
+.tstop.them .tdot { box-shadow: 0 0 0 4px var(--them); }
+.tstop.me, .tstop.them { color: var(--ink); font-weight: 700; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.codebox { display: grid; gap: 8px; }
+.codebox label, .screen label { font-weight: 700; font-size: 14px; }
+.coderow { display: flex; gap: 8px; }
+.code, .name, textarea { font: 15px var(--body); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--card); color: var(--ink); min-width: 0; }
+.code { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+textarea { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 13px; resize: vertical; }
+.copied { color: var(--hill); font-size: 14px; min-height: 1.2em; }
+.err { color: var(--heart); font-weight: 700; }
+.cmp { display: grid; gap: 14px; margin-top: 8px; }
+.agree { display: flex; gap: 14px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.pct { font: 800 44px var(--display); color: var(--heart); }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pair > div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.pair ol { margin: 0; padding-left: 20px; }
+.pair li.shared { color: var(--heart); font-weight: 700; }
+.tname { color: var(--muted); font-size: 14px; }
+.key { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; }
+.key.me { background: var(--hill); } .key.them { box-shadow: 0 0 0 3px var(--them); }
+/* Draft 3: the sort, most and least, face-offs, sureness, and the compare page. */
+.sortcard { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px 18px; display: grid; gap: 10px; min-height: 9em; align-content: center; }
+.vname { font-size: 15px; color: var(--muted); }
+.vname b { color: var(--heart); font-family: var(--display); font-size: 17px; }
+.stmt.big { font-size: clamp(21px, 5.6vw, 26px); }
+.piles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.pile { font: 700 16px var(--body); border-radius: 14px; padding: 14px 6px; min-height: 58px; border: 2px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+.pile.p3 { border-color: var(--heart); } .pile.p2 { border-color: var(--heart-soft); } .pile.p0 { border-color: var(--muted); }
+.pile.p3[aria-checked="true"] { background: var(--heart); color: var(--bg); }
+.pile.p2[aria-checked="true"] { background: var(--heart-soft); border-color: var(--heart); }
+.pile.p1[aria-checked="true"] { background: var(--line); border-color: var(--muted); }
+.pile.p0[aria-checked="true"] { background: var(--muted); color: var(--bg); }
+.piletally { color: var(--muted); font-size: 15px; }
+.piletally b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.note.small { font-size: 14px; }
+.picklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.bw { display: grid; gap: 10px; }
+.bwrow { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.bwtext { display: grid; gap: 2px; }
+.bwtext b { font-family: var(--display); font-size: 18px; }
+.bwtext span { color: var(--muted); font-size: 14px; }
+.bwbtns { display: grid; gap: 6px; }
+.mark { font: 700 14px var(--body); border-radius: 999px; padding: 8px 12px; border: 2px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.mark.up[aria-pressed="true"] { background: var(--heart); border-color: var(--heart); color: var(--bg); }
+.mark.down[aria-pressed="true"] { background: var(--muted); border-color: var(--muted); color: var(--bg); }
+.duel { display: grid; gap: 10px; }
+.duelopt { text-align: left; display: grid; gap: 4px; background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 18px 16px; color: var(--ink); cursor: pointer; font: 15px var(--body); }
+.duelopt[aria-pressed="true"] { border-color: var(--heart); background: var(--heart-soft); }
+.dphrase { font: 700 20px/1.25 var(--display); }
+.dname { color: var(--muted); font-size: 14px; }
+.or { text-align: center; color: var(--muted); font-weight: 700; font-size: 14px; }
+.tophead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.sure { font: 700 12px var(--body); border-radius: 999px; padding: 2px 9px; letter-spacing: 0.02em; }
+.s-sure { background: var(--hill); color: var(--bg); }
+.s-likely { background: var(--hill-soft); color: var(--ink); }
+.s-close-call { background: var(--line); color: var(--ink); }
+.ev { color: var(--muted); font-size: 13px; }
+.close { color: var(--muted); }
+.corelist { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.corelist li { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 14px; }
+.corelist li span { display: none; }
+.how { color: var(--muted); }
+.how summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+.how p { margin-top: 8px; max-width: 62ch; }
+.cmp-types, .cmp-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.typecard.small { padding: 16px; gap: 6px; }
+.typecard.small h3 { font-size: 22px; }
+.cmp-cols > div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.cmp-cols ol { margin: 0; padding-left: 20px; }
+.cmp-cols li.shared { color: var(--heart); font-weight: 700; }
+.agree b { font: 800 32px var(--display); color: var(--heart); }
+.shared-note { background: var(--them-soft); border-radius: 16px; padding: 16px 18px; display: grid; gap: 10px; }
+.shared-note p { margin: 0; max-width: 60ch; }
+.cmp-bars { display: grid; gap: 10px; }
+.cmp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 0; color: var(--muted); font-size: 14px; }
+.cmp-legend .key { margin-right: -10px; }
+.key.sq { border-radius: 3px; } .key.ka { background: var(--heart); } .key.kb { background: var(--them); }
+.cbar-row { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr); gap: 10px; align-items: center; font-size: 15px; }
+.cbar-pair { display: grid; gap: 4px; }
+.cbar-line { display: grid; grid-template-columns: minmax(0, 1fr) 2.4em; gap: 8px; align-items: center; }
+.bar.a { background: var(--heart); opacity: 1; } .bar.b { background: var(--them); opacity: 1; }
+.badge.them { background: var(--them); }
+.cmp-cols .sure { margin-left: 2px; }
+@media (max-width: 420px) {
+  .pair, .cmp-types, .cmp-cols { grid-template-columns: 1fr; }
+  .bar-row { grid-template-columns: minmax(0, 7em) minmax(0, 1fr) 3em; }
+  .piles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bwrow { grid-template-columns: 1fr; }
+  .bwbtns { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+</style>
+</head>
+<body>
+<script>if (!/(\/|\.html?)$/.test(location.pathname)) history.replaceState(null, '', location.pathname + '/' + location.search + location.hash);</script>
+<main id="app"><noscript>Wayfinder needs JavaScript to run.</noscript></main>
+<script>
+// core.js: the data and the logic of Wayfinder, a values type test (draft 5). No DOM here: the page uses it, and the tests run
+// it in Node. Draft 5 adds one thing to draft 4: when the type is a close call between two pairs, the player picks.
+// The top 5 is worked out from the answers, never picked by the player. Four kinds of answer feed it: a sort of the cards into
+// piles with limits, screens of four where the player marks the most and the least like them, one-or-the-other face-offs among
+// the leaders, and the same screens of four for the bottom of the sort. Draft 4: every card is a value, never one cause;
+// every wish is sized (the world, or one's own life) and a face-off between sizes asks which is more you; every hill leans on
+// two values, and a stance at either end adds a little to its value's area.
+(function (root) {
+  "use strict";
+
+  // Ten areas. A type's name must fit every value in its areas, never only the best-known one: a type is earned by whichever
+  // values in the area a person holds, so its name and line are written for all of them.
+  const AREAS = [
+    { key: "people", name: "Your people", line: "who you'd drop everything for" },
+    { key: "self", name: "Being you", line: "the right to be your own" },
+    { key: "kind", name: "Kindness", line: "how you treat whoever's in front of you" },
+    { key: "world", name: "A fairer world", line: "the wide circle" },
+    { key: "next", name: "What's next", line: "hope, progress and more life" },
+    { key: "joy", name: "Joy", line: "what makes it worth it" },
+    { key: "ground", name: "Steady ground", line: "what keeps you standing" },
+    { key: "mind", name: "Mind", line: "how you know things" },
+    { key: "mark", name: "Your mark", line: "what you leave behind" },
+    { key: "bigger", name: "Something bigger", line: "what you live by" },
+  ];
+
+  // [area, name, line, the statement people sort, a face-off phrase, what it says about you]
+  const V = [
+    [0, "Closeness", "letting someone all the way in", "I long for closeness with someone I care about.", "a year of real closeness with one person", "You want to be known all the way through by someone, and to know them back."],
+    [0, "Romance", "the swoony, butterflies kind", "I want a love story, and I'm not embarrassed about it.", "a real love story", "You believe in the swoony stuff, and you're right to."],
+    [0, "Friendship", "long talks, group chats, showing up", "My friends are one of the main points of my life.", "a long weekend with your best friends", "Your friends aren't a side quest. They're a main storyline."],
+    [0, "Chosen family", "the people you pick are your people", "My chosen people are my family, full stop.", "a chosen family that's yours for life", "The people you've chosen are home, whatever any paperwork says."],
+    [0, "Roots", "the family you grew up with", "Staying close to the family I grew up with matters to me.", "being close with the family you grew up with", "Where you come from stays part of where you're going."],
+    [0, "Loyalty", "you show up, and you stay", "Once you're my person, I'm in your corner for good.", "being the one your people can always count on", "When you're in, you're in. People can count on that."],
+    [0, "Feeling loved", "being cherished, plainly", "I want to feel loved, and I don't think that's too much to ask.", "feeling deeply loved, every single day", "You want to feel loved, out loud and often, and you know that's not too much."],
+    [0, "Raising a family", "kids, and the home you make for them", "Having kids and raising a family of my own matters to me.", "a family of your own, growing up around you", "You want a family of your own, noise and all."],
+    [1, "Becoming", "turning into who you actually are", "I want my outside to match who I am inside.", "becoming more fully who you are", "You're on your way to being exactly who you are, and that's the whole point."],
+    [1, "Freedom", "nobody's permission needed", "I need room to run my own life.", "total freedom to run your own life", "You need room to steer your own life, and you'll make that room if you have to."],
+    [1, "Being seen", "the real you, no translation", "I want people to know the real me, not a version of me.", "being seen exactly as you are", "You want to be met as you really are, not as a rough sketch."],
+    [1, "Bodily autonomy", "your body, your call", "What happens to my body should be up to me.", "full say over your own body", "Your body is yours. That one's not up for a vote."],
+    [1, "Privacy", "some things are just yours", "I guard what's mine to keep: my data, my thoughts, my business.", "a life nobody can pry into", "Some of you is just for you, and you protect it."],
+    [1, "Off-script", "your own weird way, on purpose", "I'd rather do things my own weird way than the normal way.", "a life that doesn't follow the script", "The usual path is a suggestion, and you've declined it."],
+    [1, "Self-acceptance", "liking who you already are", "Being at peace with who I am matters more to me than fixing myself.", "waking up glad to be you", "You're not a renovation project. You're someone you get to like."],
+    [1, "Looking good", "your look, exactly you", "How I look matters to me, and it says who I am.", "always looking your best, and like yourself", "You like looking good, and looking like you, and you're not sorry."],
+    [2, "Kindness", "gentle with people, even strangers", "I go out of my way to be kind, even when no one's watching.", "being the kindest person in every room", "You're gentle on purpose, and it makes rooms better."],
+    [2, "Generosity", "giving freely", "When I have extra, I want to give it away.", "being able to give freely, whenever you want", "What you have is something to share, and you share it."],
+    [2, "Forgiveness", "letting it go, for real", "I'd rather forgive than hold a grudge.", "a life with no grudges in it", "You let things go, and you don't keep score."],
+    [2, "Helping", "your time for someone else's day", "I like spending my time making someone else's day easier.", "a day spent helping people who need it", "You'd rather be useful than be thanked."],
+    [2, "Looking after", "someone small, sick or sad", "Taking care of someone (a kid, a pet, a friend who's sick) feels right to me.", "someone to take care of, who's better for it", "You're the one with the soup and the blanket."],
+    [2, "Community", "we keep each other going", "When someone in my community needs something, we should handle it together.", "a neighborhood where everyone has each other's back", "You believe people should look after each other, and you show up for it."],
+    [2, "Access", "room for everyone", "I'll change what I do so more people can safely join in, like masking.", "being someone who makes room for everyone", "You make room so more people can safely be in the room."],
+    [2, "Kind words", "words that don't wound", "The words I use should leave people feeling respected.", "words that leave everyone feeling respected", "You pick your words so they land kindly, and it's not a chore."],
+    [3, "Justice", "fixing what's unfair, out loud", "Unfairness makes me want to do something, not just feel bad.", "a world that's actually fair", "Unfairness doesn't just bother you. It moves you."],
+    [3, "Animals", "their lives count too", "Animals deserve lives free of suffering we cause.", "an end to the suffering we cause animals", "Animals' lives count in your math, not as an afterthought."],
+    [3, "The planet", "the only one we've got", "I think about what my life costs the planet.", "a healthy planet for the long haul", "You feel the weight of the only home everyone has."],
+    [3, "Peace", "no more wars", "A world without war is worth working for.", "a world without war", "You want the fighting to stop, everywhere."],
+    [3, "Minds unlike ours", "AI minds, and any mind that can hurt", "If an AI could suffer, that suffering would matter to me.", "a world that takes every kind of mind seriously", "Your circle of care reaches past humans, maybe even to minds unlike ours."],
+    [3, "Enough for everyone", "nobody grinding just to survive", "People shouldn't have to spend their lives working just to get by.", "a world where nobody has to grind just to survive", "You want a world where nobody has to grind just to survive."],
+    [3, "Everyone as they are", "everyone safe to be who they are", "Everyone should get to be who they are, safely, with the care they need.", "a world where everyone, queer and trans people included, is safe to be who they are", "You want everyone safe to be who they are, and you mean everyone."],
+    [4, "Progress", "new inventions, new possibilities", "New technology excites me more than it worries me.", "the next big breakthrough", "New inventions make you hopeful more than they make you nervous."],
+    [4, "Healing", "illness beaten, pain eased", "Curing disease and easing suffering is one of the most important things people can do.", "a cure for a disease that hurts millions", "You want disease beaten for good, and you think it's worth a lot to get there."],
+    [4, "Living longer", "more years, healthier ones", "I'd take a much longer life, if it were a healthy one.", "fifty more healthy years", "More healthy years? You'd take them, and you'd use them."],
+    [4, "The far future", "people a thousand years from now count", "What happens long after I'm gone matters to me.", "a good world a thousand years from now", "You count people who haven't been born yet."],
+    [4, "Hope", "it can get better", "I believe things can actually get better.", "a real reason to be hopeful, every day", "You keep hoping, on purpose, and it keeps you moving."],
+    [4, "Foresight", "thinking ahead, so the big changes go well", "I want us to think ahead and get the big changes right, like AI.", "a world that saw its big risks coming and handled them", "You think ahead about the big changes, AI among them, so they go right for everyone in them."],
+    [4, "Flexibility", "rolling with whatever comes", "When plans change, I change with them, and that's fine by me.", "being able to roll with anything", "Plans change, and you change with them, easily."],
+    [5, "Play", "being delighted beats being impressive", "A day with nothing silly in it feels a little wasted.", "something silly in every single day", "You'd rather be delighted than impressive, and you're good at delight."],
+    [5, "Humor", "life's funnier than it has any right to be", "If we can laugh about it, we can get through it.", "laughing until it hurts, often", "You can find the funny in almost anything, and it carries you through."],
+    [5, "Adventure", "the unknown, on purpose", "I'd rather try something new than repeat something good.", "a year of adventures somewhere new", "The unknown isn't scary to you. It's a destination."],
+    [5, "Pleasure", "good food, good touch, good times", "Enjoying life with my senses is a big part of what it's for.", "the best meal of your life, every week", "Good food, good touch, good times: you know what they're for."],
+    [5, "Beauty", "making life look the way it feels", "Beautiful things, places and moments feed me.", "a life full of beautiful things and places", "You make life look the way it feels, and it feeds you."],
+    [5, "Wonder", "staying amazed", "I still get stopped in my tracks by how strange and amazing things are.", "a lifetime of being amazed", "You still get stopped in your tracks, and you hope you always will."],
+    [5, "Passion", "all in, heart first", "I want to feel things intensely, even the hard things.", "caring about something with your whole heart", "You'd rather feel it all than feel it halfway."],
+    [5, "Desire", "wanting, and being wanted", "Wanting and being wanted is part of a good life for me.", "a life with real desire in it", "You don't apologize for wanting, or for being wanted."],
+    [6, "Security", "safe, with a solid floor under everything", "I feel best when I'm safe, my basics are covered and nothing's about to fall apart.", "never having to worry about money, a roof or your safety", "You do best when you're safe and on solid ground, and you build that."],
+    [6, "Rest", "doing nothing, on purpose", "Rest isn't something I earn. It's something I need.", "a month with nothing you have to do", "You know rest isn't a reward. It's how a person keeps going."],
+    [6, "Cozy", "soft light, warm blanket, nowhere to be", "A cozy night in is one of my favorite things.", "a cozy home you never want to leave", "Soft light, warm blanket, nowhere to be: you call that a good night."],
+    [6, "Stability", "routines, plans, a life that stays steady", "I like routines, plans, and a life that stays steady.", "a life with a steady rhythm you can count on", "You like a steady rhythm, and a plan you can count on."],
+    [6, "Health", "feeling good in your body", "Taking care of my body is a priority, not an afterthought.", "feeling strong and well in your body", "You take care of your body like it's the only one you've got."],
+    [6, "Simplicity", "less stuff, more life", "I'd like to own less and need less.", "a smaller, simpler life", "You'd rather need less than chase more."],
+    [6, "Inner peace", "calm on the inside", "Feeling calm inside matters more to me than getting everything done.", "a calm mind, whatever's happening", "You'd trade a lot of doing for a little more calm."],
+    [6, "Self-control", "steady hands on the wheel", "I like being able to say no to myself when it matters.", "always being able to keep your cool", "You can say no to yourself, and it gives you room."],
+    [6, "Alone time", "your own good company", "Time alone recharges me, and I protect it.", "a whole day alone, just for you", "Your own company is good company, and you guard time for it."],
+    [7, "Truth", "you'd rather know than feel better", "I want to know what's true, even when it's uncomfortable.", "knowing the truth about anything you ask", "You'd rather know than feel better, and you can handle knowing."],
+    [7, "Curiosity", "wait, how does that work?", "I fall down rabbit holes learning about random things.", "time to learn anything you want", "Rabbit holes are your natural habitat."],
+    [7, "Honesty", "saying the true thing to people", "I tell people the truth, even when a softer lie would be easier.", "a life where you never have to lie", "You tell people the truth, even when a softer lie would be easier."],
+    [7, "Growth", "getting better, on purpose", "I like getting better at things, even slowly.", "becoming a better version of yourself every year", "You like getting better at things, even when it's slow."],
+    [7, "Craft", "doing it well, even if nobody notices", "I care about doing things well, down to the details.", "doing one thing really, really well", "You care about the details nobody else will notice."],
+    [7, "Integrity", "your actions match your words", "I try to live by what I say I believe.", "living exactly the way you say you believe", "You try to live what you say you believe."],
+    [7, "Reason", "thinking it through", "I'd rather think it through than go with my gut.", "always thinking clearly", "You like to think it through, and you trust a good argument."],
+    [7, "Open mind", "changing your mind when you should", "I'm happy to change my mind when someone makes a good point.", "an open mind that never closes", "You change your mind when you should, and that's rare."],
+    [7, "Common sense", "practical, down to earth", "I trust common sense more than clever theories.", "always knowing the practical thing to do", "You keep it practical, and you're usually right."],
+    [8, "Achievement", "goals, crushed", "Accomplishing hard things gives me a deep kind of satisfaction.", "pulling off something really hard", "Hard things, done: that's your favorite feeling."],
+    [8, "Recognition", "being known for what you do", "It matters to me that people notice what I bring.", "being known for what you do", "You want what you bring to be seen and named."],
+    [8, "Influence", "a hand on the wheel", "I want a say in how things are run.", "a real say in how things are run", "You want a hand on the wheel of how things run."],
+    [8, "Wealth", "money, and what it buys", "Making good money matters to me.", "being rich", "You want money, and you're honest about what it buys."],
+    [8, "Legacy", "leaving something that lasts", "I want to make something that outlasts me.", "making something that outlasts you", "You want to leave something that lasts past you."],
+    [8, "Making things", "art, code, songs, soup", "I feel most myself when I'm creating something.", "a year to make whatever you want", "You're most yourself when you're making something."],
+    [8, "Challenge", "the harder, the better", "I'm drawn to things that are hard to do.", "a challenge that takes you to your edge", "Easy bores you. Hard is where you light up."],
+    [8, "Hard work", "putting in the hours", "I'm proud of how hard I work.", "being the hardest worker anyone knows", "You put in the hours, and you're proud of it."],
+    [8, "Teamwork", "better together than alone", "I do my best work as part of a team.", "a team that really clicks", "You're better on a team, and the team's better with you."],
+    [9, "Meaning", "something bigger, whatever you call it", "My life is connected to something bigger than me.", "knowing what your life is for", "You feel connected to something bigger, whatever you call it."],
+    [9, "Faith", "a spiritual life", "Faith or a spiritual practice is part of how I live.", "a deep, steady faith", "Faith is part of how you live, and it holds you up."],
+    [9, "Tradition", "the old ways, kept", "Keeping traditions alive matters to me.", "the traditions you love, kept alive", "You keep the old ways alive, and they keep you."],
+    [9, "Duty", "doing what's yours to do", "When something is my job, I do it, even when I don't feel like it.", "doing your part, every time", "When it's yours to do, you do it."],
+    [9, "Humility", "not making it about you", "I don't need to be the most important person in the room.", "a life that isn't about you", "You don't need the spotlight, and it shows."],
+    [9, "Rules", "doing things properly", "Rules are there for a reason, and I follow them.", "always doing things properly, by the book", "You follow the rules, and you trust them to hold."],
+    [9, "Belonging", "a place, a people, that's yours", "Belonging to a community, a faith or a people matters to me.", "a place where you truly belong", "You want to be part of something bigger, and to know you belong there."],
+    [9, "Gratitude", "counting what you've got", "I try to notice what I'm thankful for, every day.", "a life you're thankful for, every day", "You notice what's good, and you say thank you for it."],
+  ];
+  // Each card's wish is sized. A world-sized wish is for the world or for many people; every other wish is about one's own
+  // life. A face-off offers two wishes only when they are the same size; a pair of different sizes asks which is more you.
+  const WORLD = ["Justice", "Animals", "The planet", "Peace", "Minds unlike ours", "Enough for everyone", "Everyone as they are",
+                 "Progress", "Healing", "The far future", "Foresight"];
+  const VALUES = V.map(([area, name, line, stmt, duel, you], i) => ({ i, area, name, line, stmt, duel, you, size: WORLD.includes(name) ? "world" : "life" }));
+  const card = name => { const v = VALUES.find(x => x.name === name); if (!v) throw new Error("No card named " + name); return v.i; };
+  WORLD.forEach(card);
+  // "wish": the two wishes are offered; "you": the question is about the person, with each card's name and line.
+  const duelKind = (a, b) => (VALUES[a].size === VALUES[b].size ? "wish" : "you");
+
+  // Pairs that never compete: they never share a most-and-least screen and never meet in a face-off.
+  const KEEP_APART = [["Animals", "Healing"]];
+  const pairKey = (a, b) => Math.min(a, b) + "," + Math.max(a, b);
+  const APART = new Set(KEEP_APART.map(([a, b]) => pairKey(VALUES.find(v => v.name === a).i, VALUES.find(v => v.name === b).i)));
+  const apart = (a, b) => APART.has(pairKey(a, b));
+
+  const GROUPS = ["AI and tech", "Bodies and lives", "Animals and the planet", "Power and money"];
+  // [group, question, [three stops], [the value the first stop leans on, the value the last stop leans on]]. The stops are
+  // draft 2's. A hill with no honest pair of values was dropped. Animal testing for medicine is left out: healing and animal
+  // rights are kept from competing here too (see KEEP_APART).
+  const H = [
+    [0, "AI art", ["never real art", "can be real art; most of it isn't", "as real as any art, judge each piece"], ["Craft", "Beauty"]],
+    [0, "Training AI on people's work", ["only with permission and pay", "fine for public work, with an opt-out", "fine, it's how all learning works"], ["Justice", "Progress"]],
+    [0, "Data centers", ["stop building them", "build them, with strict environmental rules", "build fast, sort it out later"], ["The planet", "Progress"]],
+    [0, "If AI could do most jobs", ["everyone gets paid to live; work is optional", "a strong safety net, and help into new work", "people should still earn their living"], ["Enough for everyone", "Hard work"]],
+    [0, "The pace of AI", ["pause the big labs until it's safe", "keep going, with real safety rules", "as fast as we can"], ["Foresight", "Progress"]],
+    [0, "AI minds", ["a tool, nothing more", "unsure, and worth taking seriously", "some may already deserve moral care"], ["Common sense", "Minds unlike ours"]],
+    [0, "AI friends and partners", ["a sad stand-in for people", "fine alongside people", "a real relationship in its own right"], ["Friendship", "Open mind"]],
+    [0, "Social media", ["mostly harmful; log off", "useful, with limits", "mostly good; it's how we find each other"], ["Simplicity", "Belonging"]],
+    [1, "Masks in crowded indoor places", ["a basic courtesy, everyone should", "when you're sick, or when someone asks", "a purely personal choice"], ["Access", "Freedom"]],
+    [1, "Changing words to be kinder", ["worth it, every time", "worth it, with grace while people learn", "people should be less touchy about words"], ["Kind words", "Honesty"]],
+    [1, "Curing aging", ["cure it, if we can", "longer healthy lives, but not forever", "death gives life its shape"], ["Living longer", "Meaning"]],
+    [1, "Bodies and choices", ["always the person's call", "the person's call, with good information and support", "society should set some limits"], ["Bodily autonomy", "Rules"]],
+    [1, "Love", ["one person, for good", "whatever works for the people in it", "love shouldn't be exclusive"], ["Loyalty", "Freedom"]],
+    [2, "Eating animals", ["wrong, full stop", "less of it, and better raised", "a normal part of life"], ["Animals", "Tradition"]],
+    [2, "Cities", ["for people, not cars", "better transit, and room for cars", "cars are freedom"], ["Community", "Freedom"]],
+    [3, "Taking care of each other", ["communities, directly: mutual aid", "both; neither is enough alone", "that's what public programs are for"], ["Community", "Enough for everyone"]],
+    [3, "Billionaires", ["shouldn't exist", "tax them a lot more", "they earned it"], ["Justice", "Hard work"]],
+    [3, "How change happens", ["tear it down and build something new", "push hard from outside and inside", "fix it from within"], ["Off-script", "Rules"]],
+    [3, "Police and prisons", ["abolish them, build other ways", "shrink them, fund alternatives", "keep them, make them better"], ["Justice", "Security"]],
+    [3, "Speech online", ["say anything; answer bad speech with more", "allow most, ban threats and harassment", "moderate hard, keep spaces safe"], ["Freedom", "Kind words"]],
+    [3, "Work", ["just a way to pay rent", "it should mean something", "hard work is its own reward"], ["Rest", "Hard work"]],
+  ];
+  const HILLS = H.map(([group, q, stops, lean], i) => ({ i, group, q, stops, lean: lean.map(card) }));
+  const PER_HILL = 7;                      // hills on one screen
+
+  // Types: one per area (pure) and one per pair of areas, 10 + 45 = 55. Each line is written for the whole area.
+  const PURE = [
+    ["The Kin-Keeper", "Your people are the point. You keep the circle close and the group chat alive."],
+    ["The Original", "No copies, no permission slips. You're becoming exactly who you are."],
+    ["The Good Neighbor", "You notice who needs a hand, and you're already helping."],
+    ["The World-Mender", "You want a fairer world, and your idea of everyone keeps getting bigger."],
+    ["The Futurist", "Part of you already lives in the century ahead, and you're hopeful about it."],
+    ["The Delight Hunter", "Joy is the point, and you're very good at finding it."],
+    ["The Anchor", "Calm, steady, solid. When things shake, people hold onto you."],
+    ["The Seeker", "You want what's true, and you keep learning, even when it's uncomfortable."],
+    ["The Mark-Maker", "You want to do big things, and leave something behind."],
+    ["The Pilgrim", "You live for something bigger than you, whatever you call it."],
+  ];
+  const PAIRS = {
+    "0-1": ["The Kindred Spirit", "You need your people and your freedom, so you find people who give you both."],
+    "0-2": ["The Caretaker", "You look after your people, and anyone else who wanders into the kitchen."],
+    "0-3": ["The Circle-Widener", "You love your people up close, and you keep widening the circle of who counts."],
+    "0-4": ["The Long Haul", "You want more years with your people, and a future worth spending them in."],
+    "0-5": ["The Bonfire", "The warm center of a good time. People gather where you are."],
+    "0-6": ["The Hearth", "The house everyone ends up at, with snacks and somewhere soft to sit."],
+    "0-7": ["The Confidant", "The friend who tells the truth and keeps the secret."],
+    "0-8": ["The Ringleader", "You build things with your people, and make them a crew."],
+    "0-9": ["The Steadfast", "Faithful to your people and to what you believe in, both for good."],
+    "1-2": ["The Gentle Original", "You're yourself out loud, and gentle with everyone else."],
+    "1-3": ["The Rebel Heart", "You're yourself out loud, and you want the world safe and fair for everyone else to be too."],
+    "1-4": ["The Visionary", "You live in a future the rest of us haven't caught up to yet."],
+    "1-5": ["The Free Spirit", "No permission, all delight."],
+    "1-6": ["The Sanctuary", "You've made a safe place to be yourself, and you guard it well."],
+    "1-7": ["The Free Thinker", "Your own mind, your own conclusions, thank you."],
+    "1-8": ["The Trailblazer", "Doing it your way, and making it count."],
+    "1-9": ["The Wanderer", "Your own path, and it's headed somewhere that matters."],
+    "2-3": ["The Mender", "Kind to whoever's in front of you, and working on a fairer world for everyone else."],
+    "2-4": ["The Healer", "You want people looked after now, and a future where fewer need to be."],
+    "2-5": ["The Sunshine", "You make people's days better, and you have fun doing it."],
+    "2-6": ["The Safe Harbor", "Calm and kind: the person people come to when things are hard."],
+    "2-7": ["The Lighthouse", "You see clearly, and you shine it for others."],
+    "2-8": ["The Organizer", "You turn caring into getting it done."],
+    "2-9": ["The Devoted", "You give your time to others, and it's part of something bigger."],
+    "3-4": ["The Gardener", "Planting trees you may never sit under, for people and creatures you may never meet."],
+    "3-5": ["The Joyful Warrior", "You fight for good things, laughing the whole way."],
+    "3-6": ["The Cozy Revolutionary", "Changes the world, then naps."],
+    "3-7": ["The Truth-Teller", "You won't look away from what's unfair, and you'll say so."],
+    "3-8": ["The Changemaker", "You want a fairer world, and you want to be one of the people who make it."],
+    "3-9": ["The Steward", "You look after a world that isn't only yours, and it feels like a calling."],
+    "4-5": ["The Starchaser", "The future is an adventure, and you can't wait to see it."],
+    "4-6": ["The Steady Optimist", "Calm about today, hopeful about tomorrow."],
+    "4-7": ["The Scientist", "You want to know, so you can make tomorrow better."],
+    "4-8": ["The Inventor", "You want to build the future, not just wait for it."],
+    "4-9": ["The Torchbearer", "Carrying something old and good into a better future."],
+    "5-6": ["The Comfort Connoisseur", "Good food, a warm room, the right company, and no alarm set."],
+    "5-7": ["The Truth Gremlin", "Asks one more question than anyone wanted, delightedly."],
+    "5-8": ["The Showrunner", "You make things, and you make them fun."],
+    "5-9": ["The Celebrant", "Life is a gift, and you plan to enjoy every bit of it."],
+    "6-7": ["The Librarian", "Quiet, orderly, and you know where everything is."],
+    "6-8": ["The Builder", "Steady progress, brick by brick, built to last."],
+    "6-9": ["The Keeper", "Calm, steady, and faithful to what matters."],
+    "7-8": ["The Architect", "Big ideas, drawn carefully, built for real."],
+    "7-9": ["The Philosopher", "You want to know what's true, and what it all means."],
+    "8-9": ["The Standard-Bearer", "You work hard for something bigger than you, and it shows."],
+  };
+
+  // The sort. Piles: 3 so me, 2 yes, 1 a little, 0 not me. Cards go in freely; at the end "so me" and "not me" must each hold
+  // 8 to 12 cards: a pile over 12 is narrowed on one screen and a pile under 8 topped up from its neighbour. The limits are
+  // what force real highs and lows (ratings where everything can be "agree" leave everything near the middle); narrowing at
+  // the end replaced a limit at every card, which cost a simulated agreeable player about 25 swaps.
+  const PILES = ["not me", "a little", "yes", "so me"];
+  const SOME = 3, NOTME = 0, MIN_PILE = 8, MAX_PILE = 12;
+  const TOP_REPS = 4, BOTTOM_REPS = 3, PER_SCREEN = 4, DUELS = 12, BOTTOM_DUELS = 8;
+  const SURE = 0.75, LIKELY = 0.6, CLOSE = 0.4;   // a top-5 value's chance of beating the number 6; a number 6 to 8 against the number 5
+  const AGREE = [[85, "Basically the same heart"], [70, "Close"], [55, "Different flavors"], [-Infinity, "Opposites, maybe attracting"]];
+
+  function seeded(seed) {
+    return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  function shuffleWith(a, r) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+  function shuffled(n, seed) { return shuffleWith(Array.from({ length: n }, (_, k) => k), seeded(seed)); }
+  const ORDER = shuffled(VALUES.length, 265);          // the order the cards are sorted in, the same for everyone
+  const RANK_OF = new Map(ORDER.map((v, k) => [v, k]));  // the last tie-break anywhere: the card's place in that order
+  function setSeed(items) { return items.reduce((s, i) => (Math.imul(s, 31) + i + 7) | 0, 1009); }
+
+  function mean(xs) { return xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : 0; }
+  function lexLess(x, y) { for (let k = 0; k < x.length; k++) if (x[k] !== y[k]) return x[k] < y[k]; return false; }
+
+  // Screens of four from a set of cards: every card on `reps` screens (a few on one more, to fill the last screens), no card
+  // twice on a screen, pairs spread out, and the same screens every time for the same set, so a results code need not hold them.
+  function screens(items, reps) {
+    const n = items.length, nb = Math.ceil(n * reps / PER_SCREEN), r = seeded(setSeed(items.slice().sort((a, b) => a - b)));
+    const order = shuffleWith(items.slice().sort((a, b) => a - b), r);
+    const quota = new Map(order.map(i => [i, reps]));
+    for (let e = 0; e < nb * PER_SCREEN - n * reps; e++) quota.set(order[e % n], quota.get(order[e % n]) + 1);
+    const seen = new Map(order.map(i => [i, 0])), co = new Map();
+    const key = (a, b) => a < b ? a + "," + b : b + "," + a;
+    // A pair kept apart gets its screens first, spread out and never shared; the rest fill around them. (A greedy fill alone
+    // can paint itself into a corner: in a set of 8, each of the two needs half the screens.)
+    const fixed = Array.from({ length: nb }, () => []);
+    const spread = (list, q) => Array.from({ length: Math.min(q, list.length) }, (_, k) => list[Math.floor(k * list.length / Math.min(q, list.length))]);
+    for (const [x, y] of KEEP_APART.map(([a, c]) => [VALUES.find(v => v.name === a).i, VALUES.find(v => v.name === c).i]).filter(([x, y]) => items.includes(x) && items.includes(y))) {
+      const all = Array.from({ length: nb }, (_, b) => b), bx = spread(all, quota.get(x)), by = spread(all.filter(b => !bx.includes(b)), quota.get(y));
+      bx.forEach(b => fixed[b].push(x)); by.forEach(b => fixed[b].push(y));
+      quota.set(x, quota.get(x) - bx.length); quota.set(y, quota.get(y) - by.length); seen.set(x, bx.length); seen.set(y, by.length);
+    }
+    const out = [];
+    for (let b = 0; b < nb; b++) {
+      const blk = fixed[b].slice();
+      while (blk.length < PER_SCREEN) {
+        let pick = null, best = null;
+        for (const i of order) {
+          if (blk.includes(i)) continue;
+          if (blk.some(j => apart(i, j))) continue;          // a guard only: placing the pair first already keeps them apart
+          const q = quota.get(i), c = blk.reduce((s, j) => s + (co.get(key(i, j)) || 0), 0);
+          const score = [q > 0 ? 0 : 1, -q, c, seen.get(i)];          // has quota left, most left, fewest shared, least seen
+          if (!best || lexLess(score, best)) { pick = i; best = score; }
+        }
+        blk.push(pick); quota.set(pick, quota.get(pick) - 1); seen.set(pick, seen.get(pick) + 1);
+      }
+      blk.forEach((i, x) => blk.slice(x + 1).forEach(j => co.set(key(i, j), (co.get(key(i, j)) || 0) + 1)));
+      out.push(shuffleWith(blk, r));                                     // where each card sits on the screen
+    }
+    return out;
+  }
+
+  // Which cards are in the top and bottom sets: the "so me" and "not me" piles.
+  function topSet(piles) { return VALUES.map(v => v.i).filter(i => piles[i] === SOME); }
+  function bottomSet(piles) { return VALUES.map(v => v.i).filter(i => piles[i] === NOTME); }
+  function pilesOk(piles) {
+    const n = p => piles.filter(x => x === p).length;
+    return piles.length === VALUES.length && piles.every(x => x >= 0 && x <= 3)
+      && n(SOME) >= MIN_PILE && n(SOME) <= MAX_PILE && n(NOTME) >= MIN_PILE && n(NOTME) <= MAX_PILE;
+  }
+
+  // Most-and-least screens: each screen's picks are two positions on it, [up, down]. On the top screens up is "most like me" and
+  // down "least"; on the bottom screens up is "least like me" and down "most", so on both, up pushes a card further toward its
+  // end of the list. tally() counts the marks (shown on the results page); bwPairs() turns each screen into the comparisons it
+  // holds: the up card beats the other three, and the other two beat the down card.
+  function tally(scr, picks) {
+    const t = new Map();
+    scr.forEach((blk, b) => blk.forEach((i, pos) => {
+      const x = t.get(i) || { up: 0, down: 0, shown: 0 }; x.shown++;
+      if (picks[b] && picks[b][0] === pos) x.up++;
+      if (picks[b] && picks[b][1] === pos) x.down++;
+      t.set(i, x);
+    }));
+    return t;
+  }
+  function bwPairs(scr, picks) {
+    const pairs = [];
+    scr.forEach((blk, b) => {
+      if (!picks[b]) return;
+      const [u, d] = picks[b];
+      blk.forEach((x, k) => { if (k !== u) pairs.push([blk[u], x]); if (k !== d && k !== u) pairs.push([x, blk[d]]); });
+    });
+    return pairs;
+  }
+  // A Bradley-Terry fit of [winner, loser] pairs (minorization-maximization, a fixed 200 rounds): each card's strength, so that
+  // a beats b with chance s(a) / (s(a) + s(b)). Each card also gets half a win and half a loss against an average card, so a
+  // card that won every time still has a finite strength.
+  function bt(items, pairs) {
+    const s = new Map(items.map(i => [i, 1])), sorted = items.slice().sort((a, b) => a - b);
+    for (let it = 0; it < 200; it++) {
+      for (const i of sorted) {
+        let w = 0.5, d = 1 / (s.get(i) + 1);
+        for (const [a, b] of pairs) {
+          if (a === i) { w++; d += 1 / (s.get(a) + s.get(b)); } else if (b === i) d += 1 / (s.get(a) + s.get(b));
+        }
+        s.set(i, w / d);
+      }
+    }
+    return s;
+  }
+  const byStrength = s => (a, b) => (s.get(b) - s.get(a)) || (RANK_OF.get(a) - RANK_OF.get(b));
+
+  // Face-offs, one at a time: each goes to the closest call near the edge of the five (the top 5, or the bottom 5), given
+  // every answer so far. Returns the pairs as shown, for every answered face-off and the next one; which card comes first is
+  // fixed by the pair. Most-and-least screens alone order a small set badly (with no noise at all, 4 screens per card put the
+  // exact bottom 5 in order for 125 of 400 made-up players); a face-off settles exactly the comparison a screen leaves open.
+  function faceoffs(items, basePairs, answers, count, salt) {
+    const pairs = basePairs.slice(), asked = new Set(), seq = [];
+    for (let d = 0; d < count; d++) {
+      const s = bt(items, pairs), R = items.slice().sort(byStrength(s));
+      let best = null;
+      for (let a = 0; a < Math.min(8, R.length); a++) for (let b = a + 1; b < Math.min(a + 3, R.length, 9); b++) {
+        const x = R[a], y = R[b], key = Math.min(x, y) + "," + Math.max(x, y);
+        if (asked.has(key) || apart(x, y)) continue;
+        const gap = Math.abs(Math.log(s.get(x)) - Math.log(s.get(y))) + (a <= 4 && b >= 5 ? 0 : 0.15) + 0.05 * (b - a - 1);
+        if (!best || gap < best[0]) best = [gap, x, y, key];
+      }
+      if (!best) break;
+      asked.add(best[3]);
+      const r = seeded(setSeed([Math.min(best[1], best[2]), Math.max(best[1], best[2])]) ^ salt);
+      const pair = r() < 0.5 ? [best[1], best[2]] : [best[2], best[1]];
+      seq.push(pair);
+      if (d >= answers.length) break;
+      const w = answers[d] === 0 ? pair[0] : pair[1];
+      pairs.push([w, w === pair[0] ? pair[1] : pair[0]]);
+    }
+    return seq;
+  }
+  // The top's face-offs ("if you could have just one") and the bottom's ("which could you more easily live without?").
+  function duelSeq(piles, top, answers) { const T = topSet(piles); return faceoffs(T, bwPairs(screens(T, TOP_REPS), top), answers, DUELS, 0); }
+  function bottomSeq(piles, bottom, answers) { const B = bottomSet(piles); return faceoffs(B, bwPairs(screens(B, BOTTOM_REPS), bottom), answers, BOTTOM_DUELS, 0x2c1b); }
+  function withAnswers(pairs, seq, answers) {
+    seq.slice(0, answers.length).forEach((pair, k) => { const w = answers[k] === 0 ? pair[0] : pair[1]; pairs.push([w, w === pair[0] ? pair[1] : pair[0]]); });
+    return pairs;
+  }
+
+  // Everything the results page shows, from the answers alone.
+  function result(ans) {
+    const T = topSet(ans.piles), B = bottomSet(ans.piles);
+    const ts = screens(T, TOP_REPS), t = tally(ts, ans.top), pairs = bwPairs(ts, ans.top);
+    const seq = duelSeq(ans.piles, ans.top, ans.duels);
+    const won = new Map(T.map(i => [i, { won: 0, of: 0 }]));
+    seq.slice(0, ans.duels.length).forEach((pair, k) => {
+      const w = ans.duels[k] === 0 ? pair[0] : pair[1], l = w === pair[0] ? pair[1] : pair[0];
+      pairs.push([w, l]); won.get(w).won++; won.get(w).of++; won.get(l).of++;
+    });
+    const s = bt(T, pairs), ranked = T.slice().sort(byStrength(s)), top5 = ranked.slice(0, 5);
+    const vs = (i, j) => (j === undefined ? 1 : s.get(i) / (s.get(i) + s.get(j)));
+    const sureness = i => { const p = vs(i, ranked[5]); return { p, word: p >= SURE ? "sure" : p >= LIKELY ? "likely" : "close call" }; };
+    const evidence = i => ({ most: t.get(i).up, least: t.get(i).down, shown: t.get(i).shown, won: won.get(i).won, duels: won.get(i).of, ...sureness(i) });
+    const close = ranked.slice(5, 8).filter(i => vs(i, ranked[4]) >= CLOSE);
+    const sb = bt(B, withAnswers(bwPairs(screens(B, BOTTOM_REPS), ans.bottom), bottomSeq(ans.piles, ans.bottom, ans.bottomDuels), ans.bottomDuels));
+    const bottom5 = B.slice().sort(byStrength(sb)).slice(0, 5);          // bottom picks are [least, most]; a face-off's winner is the easier to live without
+    return { ranked, top5, close, bottom5, evidence, type: typeOf(top5, T, ans.hills, ans.die, ans.pick), areas: areaShares(ans.piles) };
+  }
+
+  // The hills' share of the type: a stance at either end of a hill adds HILL_PT to the area of the value that end leans on,
+  // DIE_PT for a hill marked as one to die on, and no area takes more than HILL_CAP from the hills (the hills lean on some
+  // areas more than others: eight ends lean into A fairer world, one into Joy). The middle stop holds both, and a pass says
+  // nothing, so neither adds anything.
+  const HILL_PT = 0.25, DIE_PT = 0.5, HILL_CAP = 1;
+  function hillPoints(hills, die) {
+    const pts = AREAS.map(() => 0), leans = [];
+    (hills || []).forEach((x, h) => {
+      if (x !== 1 && x !== 3) return;
+      const c = HILLS[h].lean[x === 1 ? 0 : 1], w = (die || []).includes(h) ? DIE_PT : HILL_PT;
+      pts[VALUES[c].area] += w; leans.push({ hill: h, card: c, w });
+    });
+    return { pts: pts.map(x => Math.min(x, HILL_CAP)), leans };
+  }
+  // The type: points for each area from the top 5 (5, 4, 3, 2, 1 by place), half a point for each other "so me" card, and the
+  // hills' points. The two areas with the most points make the type; when the second has under SOLO of the first, it's the
+  // first area's pure type. The reasons come with it: the values that put the person in each area, from the sort, and the
+  // values the hills leaned on there.
+  // A close call: the type is a pair, the third area is past the pure-type line too, and it is within MARGIN points of the
+  // second (one place in the top 5). Then both pairs are offered, the sort's reading first, and the player's pick names the
+  // type; until there is a pick the sort's reading does, and a pick that is no longer one of the two on offer is dropped.
+  const SOLO = 0.4, MARGIN = 1;
+  function typeOf(top5, T, hills, die, pick) {
+    const pts = AREAS.map(() => 0), bestPlace = AREAS.map(() => 99);
+    top5.forEach((i, k) => { pts[VALUES[i].area] += 5 - k; bestPlace[VALUES[i].area] = Math.min(bestPlace[VALUES[i].area], k); });
+    (T || []).filter(i => !top5.includes(i)).forEach(i => { pts[VALUES[i].area] += 0.5; });
+    const hp = hillPoints(hills, die);
+    hp.pts.forEach((x, a) => { pts[a] += x; });
+    const order = AREAS.map((_, a) => a).sort((a, b) => (pts[b] - pts[a]) || (bestPlace[a] - bestPlace[b]) || (a - b));
+    const [a, b, c] = order;
+    const because = x => top5.filter(i => VALUES[i].area === x).concat((T || []).filter(i => !top5.includes(i) && VALUES[i].area === x)).slice(0, 3);
+    const fromHills = x => [...new Set(hp.leans.filter(l => VALUES[l.card].area === x).map(l => l.card))];
+    const base = { points: pts, hillPoints: hp.pts, leans: hp.leans };
+    if (pts[b] < SOLO * pts[a]) return { name: PURE[a][0], line: PURE[a][1], areas: [a], because: [because(a)], hillsIn: [fromHills(a)], ...base, close: null };
+    const pair = x => { const key = Math.min(a, x) + "-" + Math.max(a, x);
+      return { name: PAIRS[key][0], line: PAIRS[key][1], areas: [a, x], because: [because(a), because(x)], hillsIn: [fromHills(a), fromHills(x)] }; };
+    const offered = pts[c] >= SOLO * pts[a] && pts[b] - pts[c] <= MARGIN ? [b, c] : null;
+    const picked = offered && offered.includes(pick) ? pick : null;
+    const close = offered ? { first: a, options: offered.map(x => ({ area: x, ...pair(x) })), picked } : null;
+    return { ...pair(picked === null ? b : picked), ...base, close };
+  }
+
+  // How much of each area is "you": the mean of its cards' piles, 0 (all "not me") to 100 (all "so me").
+  function areaShares(piles) {
+    return AREAS.map((_, a) => Math.round(100 * mean(VALUES.filter(v => v.area === a).map(v => piles[v.i])) / 3));
+  }
+
+  // --- the results code: every answer, so a friend's copy of the page can work out the same results -----------------------
+  // Draft 5's codes start WF1. and carry the close-call pick after the name; draft 4's HH4. codes still read, with no pick.
+  const PREFIX = "WF1.", OLD4 = "HH4.";
+  const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+  function encode(ans) {
+    if (!pilesOk(ans.piles)) throw new Error("The sort isn't finished.");
+    if (ans.duels.length !== DUELS || ans.bottomDuels.length !== BOTTOM_DUELS) throw new Error("The face-offs aren't finished.");
+    const bits = [];
+    const put = (v, n) => { for (let k = n - 1; k >= 0; k--) bits.push((v >> k) & 1); };
+    ans.piles.forEach(x => put(x, 2));
+    ans.top.forEach(([m, l]) => { put(m, 2); put(l, 2); });
+    ans.duels.forEach(x => put(x, 1));
+    ans.bottom.forEach(([l, m]) => { put(l, 2); put(m, 2); });
+    ans.bottomDuels.forEach(x => put(x, 1));
+    ans.hills.forEach(x => put(x === null || x === undefined ? 0 : x, 2));
+    for (let k = 0; k < 3; k++) put(k < ans.die.length ? ans.die[k] : 31, 5);
+    const chars = Array.from((ans.name || "").trim());           // whole characters, so an emoji is never cut in half
+    while (new TextEncoder().encode(chars.join("")).length > 20) chars.pop();
+    const name = new TextEncoder().encode(chars.join(""));
+    put(name.length, 5); name.forEach(b => put(b, 8));
+    put(ans.pick === null || ans.pick === undefined ? 0 : ans.pick + 1, 4);
+    while (bits.length % 6) bits.push(0);
+    let s = PREFIX;
+    for (let k = 0; k < bits.length; k += 6) s += B64[bits.slice(k, k + 6).reduce((v, b) => v * 2 + b, 0)];
+    return s;
+  }
+  function decode(code) {
+    const c = String(code || "").trim(), v4 = c.startsWith(OLD4);
+    if (/^(HH|WF)\d+\./.test(c) && !c.startsWith(PREFIX) && !v4) throw new Error("That code is from an earlier version of the test, so it can't be read here. Taking it again makes a new one.");
+    if (!c.startsWith(PREFIX) && !v4) throw new Error("That doesn't look like a Wayfinder code. It should start with " + PREFIX);
+    const bits = [];
+    for (const ch of c.slice((v4 ? OLD4 : PREFIX).length)) { const v = B64.indexOf(ch); if (v < 0) throw new Error("The code has a character that doesn't belong in it: " + ch); for (let k = 5; k >= 0; k--) bits.push((v >> k) & 1); }
+    let p = 0;
+    const get = n => { if (p + n > bits.length) throw new Error("The code is cut short. Copy the whole thing and try again."); let v = 0; for (let k = 0; k < n; k++) v = v * 2 + bits[p++]; return v; };
+    const bad = () => new Error("The code doesn't add up. It may have been changed by hand.");
+    const piles = VALUES.map(() => get(2));
+    if (!pilesOk(piles)) throw bad();
+    const nTop = screens(topSet(piles), TOP_REPS).length, nBottom = screens(bottomSet(piles), BOTTOM_REPS).length;
+    const pair = () => { const a = get(2), b = get(2); if (a === b) throw bad(); return [a, b]; };
+    const top = Array.from({ length: nTop }, pair);
+    const duelPicks = Array.from({ length: DUELS }, () => get(1));
+    const bottom = Array.from({ length: nBottom }, pair);
+    const bottomDuels = Array.from({ length: BOTTOM_DUELS }, () => get(1));
+    const hills = HILLS.map(() => get(2));
+    const die = [0, 1, 2].map(() => get(5)).filter(x => x !== 31);
+    if (die.some(x => x >= HILLS.length || !hills[x]) || new Set(die).size !== die.length) throw bad();
+    const len = get(5); if (len > 20) throw bad();
+    const bytes = new Uint8Array(len); for (let k = 0; k < len; k++) bytes[k] = get(8);
+    let name = "";
+    try { name = new TextDecoder("utf-8", { fatal: true }).decode(bytes); } catch (e) { throw new Error("The name in the code is garbled."); }
+    let pick = null;
+    if (!v4) { const p = get(4); if (p > AREAS.length) throw bad(); pick = p ? p - 1 : null; }
+    return { piles, top, duels: duelPicks, bottom, bottomDuels, hills, die, name, pick };
+  }
+
+  // --- comparing two people ---------------------------------------------------------------------------------------------
+  function compare(a, b) {
+    const ra = result(a), rb = result(b);
+    const agree = Math.round(100 * (1 - mean(VALUES.map(v => Math.abs(a.piles[v.i] - b.piles[v.i]))) / 3));
+    const word = AGREE.find(([lim]) => agree >= lim)[1];
+    const sharedTop = ra.top5.filter(i => rb.top5.includes(i));
+    const bothSoMe = topSet(a.piles).filter(i => b.piles[i] === SOME);
+    const split = VALUES.filter(v => Math.abs(a.piles[v.i] - b.piles[v.i]) === 3).map(v => v.i);   // one says "so me", the other "not me"
+    const both = HILLS.filter(h => a.hills[h.i] > 0 && b.hills[h.i] > 0);
+    const same = both.filter(h => a.hills[h.i] === b.hills[h.i]).map(h => h.i);
+    const opposite = both.filter(h => Math.abs(a.hills[h.i] - b.hills[h.i]) === 2).map(h => h.i);
+    const bothDie = a.die.filter(i => b.die.includes(i));
+    // Why two people split on a hill: the value each one's end leans on.
+    const why = opposite.map(h => ({ hill: h, a: HILLS[h].lean[a.hills[h] === 1 ? 0 : 1], b: HILLS[h].lean[b.hills[h] === 1 ? 0 : 1] }));
+    return { agree, word, sharedTop, bothSoMe, split, answeredBoth: both.length, same, opposite, why, bothDie, a: ra, b: rb };
+  }
+
+  const api = { AREAS, VALUES, WORLD, duelKind, GROUPS, HILLS, PER_HILL, HILL_PT, DIE_PT, HILL_CAP, SOLO, hillPoints, PURE, PAIRS, PILES, SOME, NOTME, MIN_PILE, MAX_PILE, TOP_REPS, BOTTOM_REPS, PER_SCREEN,
+                DUELS, BOTTOM_DUELS, SURE, LIKELY, CLOSE, AGREE, ORDER, PREFIX, OLD4, MARGIN, KEEP_APART, apart, seeded, shuffled, screens, topSet, bottomSet, pilesOk, tally,
+                bwPairs, bt, faceoffs, duelSeq, bottomSeq, result, typeOf, areaShares, encode, decode, compare, mean };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.HH = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+// app.js: the page for Wayfinder, a values type test (draft 5). Uses window.HH from core.js. Answers are saved as they change: in this
+// browser, and in the viewer's own private corner of the page's store when the page runs inside claude.ai with an account.
+(function () {
+  "use strict";
+  const H = window.HH;
+  const KEY = "hh.d4";
+  const PER_HILL = H.PER_HILL, HILL_SCREENS = Math.ceil(H.HILLS.length / PER_HILL);
+  const PILE_BTNS = [[3, "so me"], [2, "yes"], [1, "a little"], [0, "not me"]];
+  const app = document.getElementById("app");
+
+  const blank = () => ({ v: 4, step: "intro", page: 0, piles: Array(H.VALUES.length).fill(null), top: [], topFor: "", duels: [],
+                         bottom: [], bottomFor: "", bottomDuels: [], hills: Array(H.HILLS.length).fill(null), die: [], pick: null,
+                         name: "", mine: "", theirs: "", savedAt: 0, resetAt: 0 });
+  function hasAnswers() { return S.piles.some(x => x !== null) || S.hills.some(x => x !== null); }
+  function valid(s) {
+    return s && s.v === 4 && Array.isArray(s.piles) && s.piles.length === H.VALUES.length && Array.isArray(s.hills)
+      && s.hills.length === H.HILLS.length && Array.isArray(s.top) && Array.isArray(s.duels) && Array.isArray(s.bottom) && Array.isArray(s.bottomDuels);
+  }
+  let S = load();
+  function load() {
+    try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (valid(s)) return Object.assign(blank(), s); } catch (e) { /* no storage here */ }
+    return blank();
+  }
+
+  // --- saving: this browser always (when it lets us), the account when the page runs in claude.ai ------------------------
+  let remote = null, remoteBusy = false, remoteAgain = false, remoteTimer = null, where = "device", connecting = false;
+  function save() {
+    S.savedAt = Date.now();
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* fine: the account copy or the code still holds it */ }
+    if (remote) { clearTimeout(remoteTimer); remoteTimer = setTimeout(() => { remoteTimer = null; pushRemote(); }, 1200); }
+  }
+  // A page left in the background can be reloaded without warning, so a write still waiting goes out as soon as it is hidden.
+  function flushRemote() { if (remote && remoteTimer) { clearTimeout(remoteTimer); remoteTimer = null; pushRemote(); } }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushRemote(); });
+  window.addEventListener("pagehide", flushRemote);
+  async function pushRemote() {
+    if (!remote) return;
+    if (remoteBusy) { remoteAgain = true; return; }
+    remoteBusy = true;
+    try { await remote.set({ v: 4, savedAt: S.savedAt, state: JSON.parse(JSON.stringify(S)) }); where = "account"; }
+    catch (e) {
+      const code = e && e.code;
+      if (code === "unavailable") { setTimeout(pushRemote, 1500 + Math.random() * 1500); }
+      else { remote = null; where = "device"; }        // can't write here (a view-only visit, revoked, too big): stay on the device
+    }
+    remoteBusy = false;
+    if (remoteAgain) { remoteAgain = false; pushRemote(); }
+    refreshWhere();
+  }
+  // How far along a set of answers is. When this browser's copy and the account's differ, the one with more answers wins, then
+  // the newer: a page that comes back without this browser's copy starts blank, and a blank start must never be written over
+  // answers the account still holds (a tap before the account copy arrived used to make the blank one "newer").
+  function progressOf(s) {
+    const n = xs => xs.filter(x => x !== null && x !== undefined).length;
+    return n(s.piles) + s.top.filter(full).length + s.duels.length + s.bottom.filter(full).length + s.bottomDuels.length + n(s.hills);
+  }
+  (async function connect() {
+    const c = window.claude;
+    if (!c || typeof c.use !== "function") return;
+    connecting = true;
+    const settle = () => { if (!connecting) return; connecting = false; if (S.step === "intro") render(); };
+    setTimeout(settle, 12000);                              // a viewer that never answers resolves use() to null after 10 s
+    try {
+      const [db, user] = await Promise.all([c.use("db"), c.use("user")]);
+      if (!db || !user) return;
+      const uid = await user.id();
+      if (!uid) return;
+      const ref = db.doc("data/users/" + uid + "/hills-and-hearts-4");
+      const snap = await ref.get();
+      const d = snap.exists ? snap.data() : null;
+      const theirs = d && d.v === 4 && valid(d.state) ? Object.assign(blank(), JSON.parse(JSON.stringify(d.state))) : null;
+      const savedThere = (d && d.savedAt) || 0;
+      const resetHere = (S.resetAt || 0) > savedThere;     // answers erased on this device after the account copy was saved
+      const there = theirs ? progressOf(theirs) : -1, here = progressOf(S);
+      const take = !!theirs && !resetHere && (there > here || (there === here && savedThere > (S.savedAt || 0)));
+      if (take) {
+        S = theirs;
+        try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* fine */ }
+      }
+      remote = ref; where = theirs ? "account" : where;
+      if (!take && (theirs ? (S.savedAt || 0) !== savedThere : hasAnswers())) pushRemote();
+      refreshWhere();
+      if (take) { connecting = false; render(); }
+    } catch (e) { /* stay on this device */ }
+    finally { settle(); }
+  })();
+  let whereNote = null;
+  function refreshWhere() {
+    if (!whereNote) return;
+    whereNote.textContent = where === "account"
+      ? "Saved to your Claude account, privately: this page brings your answers back when you open it again, on any device."
+      : `Saved in this browser only. Your ${canLink ? "link" : "code"} below holds everything, so keep it somewhere to get your results back anywhere.`;
+  }
+
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? "" : String(v));
+    }
+    for (const c of kids.flat(Infinity)) if (c !== null && c !== undefined && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+    return n;
+  }
+  const V = i => H.VALUES[i];
+  const count = p => S.piles.filter(x => x === p).length;
+
+  // --- shared links: this page's own address, a #, and a results code; two codes joined by ~ open side by side. The part after
+  // the # never goes to the server, and a shared page saves nothing: the visitor's own answers stay as they were.
+  function sharedFromHash() {
+    let h = "";
+    try { h = decodeURIComponent((location.hash || "").slice(1)).trim(); } catch (e) { return null; }
+    if (!/^(WF|HH)\d+\./.test(h)) return null;
+    return { codes: h.split("~").map(x => x.trim()).filter(Boolean).slice(0, 2) };
+  }
+  let shared = sharedFromHash();
+  window.addEventListener("hashchange", () => { shared = sharedFromHash(); render(); window.scrollTo(0, 0); });
+  // A link only where this page's address is one someone else could open: not from a file, and not inside a frame (a claude.ai
+  // artifact runs in one, at an address that is not the artifact's own).
+  const canLink = /^https?:$/.test(location.protocol) && window.top === window;
+  const linkFor = code => location.origin + location.pathname + "#" + code;
+  function leaveShared() {
+    shared = null;
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { location.hash = ""; }
+  }
+
+  function go(step, page) { S.step = step; S.page = page || 0; save(); render(); window.scrollTo(0, 0); const h = app.querySelector("h1, h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); } }
+  let erasing = false;
+  function restart() { const keep = S.theirs; S = blank(); S.theirs = keep; S.resetAt = Date.now(); erasing = false; save(); flushRemote(); go("intro"); }
+  // --- reset: under every screen once there is anything to erase; two taps, so one stray tap erases nothing ---------------
+  function resetBar() {
+    const btn = el("button", { type: "button", class: "btn ghost", text: "Reset answers" });
+    const keep = el("button", { type: "button", class: "btn ghost", text: "Keep them", hidden: true });
+    btn.addEventListener("click", () => {
+      if (erasing) return restart();
+      erasing = true; btn.textContent = "Tap again to erase every answer"; keep.hidden = false;
+    });
+    keep.addEventListener("click", () => { erasing = false; btn.textContent = "Reset answers"; keep.hidden = true; btn.focus(); });
+    return el("div", { class: "resetbar" }, btn, keep);
+  }
+
+  let refresh = null;
+  function updateNav() { if (refresh) refresh(); }
+  function nav(back, next, okFn, labelFn, nextText) {
+    const nextBtn = el("button", { class: "btn primary", type: "button", onclick: () => { if (okFn()) next(); }, text: nextText || "Next" });
+    const lab = el("span", { class: "count", "aria-live": "polite" });
+    refresh = () => { const ok = okFn(); nextBtn.disabled = !ok; lab.textContent = labelFn(); };
+    refresh();
+    return el("div", { class: "nav" }, el("button", { class: "btn ghost", type: "button", onclick: back, text: "Back" }), lab, nextBtn);
+  }
+  // Progress by part: the sort is the longest, so it gets the most of the bar.
+  function progress(part, done, total) {
+    const spans = [[0, 42], [42, 66], [66, 80], [80, 100]], [a, b] = spans[part], n = Math.round(a + (b - a) * Math.min(1, done / Math.max(1, total)));
+    return el("div", { class: "progress", role: "progressbar", "aria-label": "progress", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": n },
+      el("span", { style: `width:${n}%` }));
+  }
+
+  // --- the sets the later parts work on, and clearing what a change makes stale ------------------------------------------
+  const topKey = () => H.topSet(S.piles).join(","), bottomKey = () => H.bottomSet(S.piles).join(",");
+  function syncSets() {
+    if (S.topFor !== topKey()) { S.top = []; S.duels = []; S.topFor = topKey(); }
+    if (S.bottomFor !== bottomKey()) { S.bottom = []; S.bottomDuels = []; S.bottomFor = bottomKey(); }
+  }
+  const topScreens = () => H.screens(H.topSet(S.piles), H.TOP_REPS), bottomScreens = () => H.screens(H.bottomSet(S.piles), H.BOTTOM_REPS);
+  const sortDone = () => S.piles.every(x => x !== null) && H.pilesOk(S.piles);
+  const topDone = () => sortDone() && S.topFor === topKey() && topScreens().every((_, k) => full(S.top[k]));
+  const duelsDone = () => topDone() && S.duels.length === H.DUELS;
+  const bottomDone = () => duelsDone() && S.bottomFor === bottomKey() && bottomScreens().every((_, k) => full(S.bottom[k]));
+  const bottomDuelsDone = () => bottomDone() && S.bottomDuels.length === H.BOTTOM_DUELS;
+  const hillsDone = () => S.hills.every(x => x !== null);
+  const finished = () => bottomDuelsDone() && hillsDone();
+  const full = pk => Array.isArray(pk) && pk[0] !== null && pk[1] !== null && pk[0] !== pk[1];
+
+  // --- intro ----------------------------------------------------------------------------------------------------------
+  function intro() {
+    return el("section", { class: "intro" },
+      el("p", { class: "eyebrow", text: "a values type test" }),
+      el("h1", { text: "Wayfinder" }),
+      el("p", { class: "lede", text: `Sort ${H.VALUES.length} values, then choose between the ones that are most you, and the ones that are least. Your top 5 comes out of those choices: you never pick it yourself. Then ${H.HILLS.length} hills, questions about right now, each with a real middle and two values pulling at its ends. Where you stand counts a little toward your type.` }),
+      el("ul", { class: "facts" }, el("li", {}, el("b", { text: String(H.VALUES.length) }), "cards"), el("li", {}, el("b", { text: "4" }), "kinds of question"),
+        el("li", {}, el("b", { text: String(H.HILLS.length) }), "hills"), el("li", {}, el("b", { text: "~15" }), "minutes")),
+      el("p", { class: "note", text: "Your answers are saved as you go, so you can stop and come back. Nobody sees them unless you send someone your code." }),
+      el("div", { class: "row-btns" },
+        connecting ? el("button", { class: "btn primary big", type: "button", disabled: true, text: "Looking for your saved answers…" }) :
+        finished() ? el("button", { class: "btn primary big", type: "button", onclick: () => go("results"), text: "See my results" })
+                   : el("button", { class: "btn primary big", type: "button", onclick: () => resume(), text: S.piles.some(x => x !== null) ? "Pick up where I left off" : "Start" }),
+        el("button", { class: "btn ghost", type: "button", onclick: () => go("compare"), text: "I have codes to compare" })));
+  }
+  function resume() {
+    const firstOpen = H.ORDER.findIndex(i => S.piles[i] === null);
+    if (firstOpen >= 0) return go("sort", firstOpen);
+    if (!H.pilesOk(S.piles)) return narrowNext();
+    syncSets();
+    const t = topScreens().findIndex((_, k) => !full(S.top[k]));
+    if (t >= 0) return go("top", t);
+    if (S.duels.length < H.DUELS) return go("duel", S.duels.length);
+    const b = bottomScreens().findIndex((_, k) => !full(S.bottom[k]));
+    if (b >= 0) return go("bottom", b);
+    if (S.bottomDuels.length < H.BOTTOM_DUELS) return go("bduel", S.bottomDuels.length);
+    const h = Math.floor(Math.max(0, S.hills.findIndex(x => x === null)) / PER_HILL);
+    return hillsDone() ? go("results") : go("hills", h);
+  }
+
+  // --- part 1: the sort -----------------------------------------------------------------------------------------------
+  function sort(k) {
+    const i = H.ORDER[k], v = V(i);
+    const choose = p => {
+      S.piles[i] = p; save();
+      if (k + 1 < H.ORDER.length) go("sort", k + 1); else narrowNext();
+    };
+    const tally = el("p", { class: "piletally", "aria-live": "polite" },
+      el("span", {}, el("b", { text: String(count(3)) }), " so me"), " · ", el("span", {}, el("b", { text: String(count(0)) }), " not me"),
+      count(3) > H.MAX_PILE ? el("span", { class: "hint", text: ` · you'll keep ${H.MAX_PILE} at the end` }) : null);
+    return el("section", { class: "screen" }, progress(0, k, H.ORDER.length),
+      el("p", { class: "eyebrow heart", text: `part 1 of 4 · the sort · card ${k + 1} of ${H.ORDER.length}` }),
+      el("div", { class: "sortcard" },
+        el("p", { class: "vname" }, el("b", { text: v.name }), el("span", { text: " · " + v.line })),
+        el("p", { class: "stmt big", text: v.stmt })),
+      el("div", { class: "piles", role: "radiogroup", "aria-label": "How much is this you?" },
+        PILE_BTNS.map(([p, lab]) => el("button", { type: "button", class: "pile p" + p, role: "radio", "aria-checked": String(S.piles[i] === p),
+          onclick: () => choose(p), text: lab }))),
+      tally,
+      el("p", { class: "note small", text: "Go with your gut. At the end, “so me” and “not me” each keep 8 to 12 cards, so there's no wrong number now." }),
+      nav(() => (k === 0 ? go("intro") : go("sort", k - 1)), () => (k + 1 < H.ORDER.length ? go("sort", k + 1) : narrowNext()),
+          () => S.piles[i] !== null, () => `${S.piles.filter(x => x !== null).length} of ${H.ORDER.length} sorted`));
+  }
+
+  // At the end of the sort: "so me" and "not me" each need 8 to 12. One screen fixes each that doesn't.
+  const NARROW = [
+    { id: "keep-top", need: () => count(3) > H.MAX_PILE, from: () => [3], pick: () => H.MAX_PILE, to: 2,
+      title: () => `Your “so me” pile has ${count(3)} cards. Keep the ${H.MAX_PILE} that are most you.`, sub: "The rest go to “yes”. Nothing is lost: they still count toward your areas." },
+    { id: "add-top", need: () => count(3) < H.MIN_PILE, from: () => (count(2) ? [2] : count(1) ? [1] : [0]), pick: () => H.MIN_PILE - count(3), to: 3,
+      title: () => `Your “so me” pile has only ${count(3)}. Move up ${H.MIN_PILE - count(3)} more: the ones most like you.`, sub: "The next part needs at least 8 to choose between." },
+    { id: "keep-bottom", need: () => count(0) > H.MAX_PILE, from: () => [0], pick: () => H.MAX_PILE, to: 1,
+      title: () => `Your “not me” pile has ${count(0)} cards. Keep the ${H.MAX_PILE} that are least you.`, sub: "The rest go to “a little”." },
+    { id: "add-bottom", need: () => count(0) < H.MIN_PILE, from: () => (count(1) ? [1] : [2]), pick: () => H.MIN_PILE - count(0), to: 0,
+      title: () => `Your “not me” pile has only ${count(0)}. Move down ${H.MIN_PILE - count(0)} more: the ones least like you.`, sub: "Low doesn't mean against. It means it's not what you'd build a life around." },
+  ];
+  function narrowNext() {
+    const k = NARROW.findIndex(n => n.need());
+    if (k >= 0) return go("narrow", k);
+    syncSets(); go("top", 0);
+  }
+  let picked = [];
+  function narrow(k) {
+    const n = NARROW[k], src = n.from(), cards = H.ORDER.filter(i => src.includes(S.piles[i])), want = n.pick();
+    picked = picked.filter(i => cards.includes(i));
+    const list = el("div", { class: "picklist" }, cards.map(i => el("button", { type: "button", class: "chip", "aria-pressed": String(picked.includes(i)),
+      onclick: e => { picked = picked.includes(i) ? picked.filter(x => x !== i) : picked.length < want ? picked.concat(i) : picked; e.currentTarget.setAttribute("aria-pressed", String(picked.includes(i))); updateNav(); } },
+      el("b", { text: V(i).name }), el("span", { text: V(i).line }))));
+    return el("section", { class: "screen" }, progress(0, H.ORDER.length, H.ORDER.length),
+      el("p", { class: "eyebrow heart", text: "part 1 of 4 · the sort · one more step" }),
+      el("h2", { text: n.title() }), el("p", { class: "sub", text: n.sub }), list,
+      nav(() => go("sort", H.ORDER.length - 1), () => {
+            if (n.id.startsWith("keep")) cards.filter(i => !picked.includes(i)).forEach(i => { S.piles[i] = n.to; });
+            else picked.forEach(i => { S.piles[i] = n.to; });
+            picked = []; save(); narrowNext();
+          }, () => picked.length === want, () => `${picked.length} of ${want} picked`));
+  }
+
+  // --- parts 2 and 3: most and least, then face-offs ------------------------------------------------------------------
+  function bwScreen(which, k) {
+    const scr = which === "top" ? topScreens() : bottomScreens(), blk = scr[k], store = which === "top" ? S.top : S.bottom;
+    const labels = which === "top" ? ["most you", "least you"] : ["least you", "most you"];
+    if (!Array.isArray(store[k])) store[k] = [null, null];
+    const pick = (slot, pos) => {
+      const pk = store[k];
+      pk[slot] = pk[slot] === pos ? null : pos;
+      if (pk[1 - slot] === pk[slot]) pk[1 - slot] = null;
+      if (which === "top" && S.duels.length) S.duels = [];               // the face-offs were chosen from these answers
+      if (which === "bottom" && S.bottomDuels.length) S.bottomDuels = [];
+      save(); sync(); updateNav();
+    };
+    const rows = blk.map((i, pos) => el("div", { class: "bwrow" },
+      el("div", { class: "bwtext" }, el("b", { text: V(i).name }), el("span", { text: V(i).line })),
+      el("div", { class: "bwbtns" },
+        el("button", { type: "button", class: "mark up", "data-slot": 0, "data-pos": pos, onclick: () => pick(0, pos), text: labels[0] }),
+        el("button", { type: "button", class: "mark down", "data-slot": 1, "data-pos": pos, onclick: () => pick(1, pos), text: labels[1] }))));
+    const box = el("div", { class: "bw" }, rows);
+    function sync() { box.querySelectorAll("button.mark").forEach(b => b.setAttribute("aria-pressed", String(store[k][+b.dataset.slot] === +b.dataset.pos))); }
+    sync();
+    const part = which === "top" ? 1 : 2;
+    return el("section", { class: "screen" }, progress(part, k, scr.length + (which === "top" ? H.DUELS : H.BOTTOM_DUELS)),
+      el("p", { class: "eyebrow heart", text: which === "top" ? `part 2 of 4 · most and least · ${k + 1} of ${scr.length}` : `part 3 of 4 · the other end · ${k + 1} of ${scr.length}` }),
+      el("h2", { text: which === "top" ? "Of these four, which is most you, and which is least?" : "Of these four, which is least you, and which is most?" }),
+      el("p", { class: "sub", text: which === "top" ? "They're all from your “so me” pile, so it's hard on purpose. Go with the one that would hurt most to lose." : "They're all from your “not me” pile. Which could you most easily do without?" }),
+      box,
+      nav(() => (k > 0 ? go(which, k - 1) : which === "top" ? go("sort", H.ORDER.length - 1) : go("duel", H.DUELS - 1)),
+          () => (k + 1 < scr.length ? go(which, k + 1) : which === "top" ? go("duel", 0) : go("bduel", 0)),
+          () => full(store[k]), () => (full(store[k]) ? "ready" : "pick one of each")));
+  }
+  function duelScreen(which, d) {
+    const top = which === "duel", answers = top ? S.duels : S.bottomDuels, total = top ? H.DUELS : H.BOTTOM_DUELS;
+    const seq = top ? H.duelSeq(S.piles, S.top, answers.slice(0, d)) : H.bottomSeq(S.piles, S.bottom, answers.slice(0, d));
+    const pair = seq[d], kind = H.duelKind(pair[0], pair[1]), wish = top && kind === "wish";
+    const choose = c => {
+      const next = answers.slice(0, d).concat(c);
+      if (top) S.duels = next.concat(S.duels[d] === c ? S.duels.slice(d + 1) : []); else S.bottomDuels = next.concat(S.bottomDuels[d] === c ? S.bottomDuels.slice(d + 1) : []);
+      save();
+      setTimeout(() => (d + 1 < total ? go(which, d + 1) : top ? (syncSets(), go("bottom", 0)) : go("hills", 0)), 180);
+    };
+    const opt = (i, c) => el("button", { type: "button", class: "duelopt", "aria-pressed": String(answers[d] === c), onclick: () => choose(c) },
+      wish ? el("span", { class: "dphrase", text: V(i).duel }) : el("span", { class: "dphrase", text: V(i).name }),
+      el("span", { class: "dname", text: wish ? V(i).name : V(i).line }));
+    const question = kind === "you" ? (top ? "Which is more you?" : "Which is less you?") : top ? "If you could have just one:" : "Which could you more easily live without?";
+    return el("section", { class: "screen" }, progress(top ? 1 : 2, (top ? topScreens() : bottomScreens()).length + d, (top ? topScreens() : bottomScreens()).length + total),
+      el("p", { class: "eyebrow heart", text: top ? `part 2 of 4 · face-offs · ${d + 1} of ${total}` : `part 3 of 4 · face-offs · ${d + 1} of ${total}` }),
+      el("h2", { text: question }),
+      kind === "you" ? el("p", { class: "sub", text: "One of these is about the world and one is about your own life, so this one asks about you, not which to have." }) : null,
+      el("div", { class: "duel" }, opt(pair[0], 0), el("span", { class: "or", text: "or" }), opt(pair[1], 1)),
+      el("p", { class: "note small", text: top ? "Each one goes to the closest call so far, so they get harder. That's how you know it's working." : "Each one goes to the closest call at this end." }),
+      nav(() => (d > 0 ? go(which, d - 1) : top ? go("top", topScreens().length - 1) : go("bottom", bottomScreens().length - 1)),
+          () => (d + 1 < total ? go(which, d + 1) : top ? (syncSets(), go("bottom", 0)) : go("hills", 0)),
+          () => answers.length > d, () => `${Math.min(answers.length, total)} of ${total}`));
+  }
+
+  // --- part 4: hills --------------------------------------------------------------------------------------------------
+  let dieSyncs = [];
+  function hills(page) {
+    const list = H.HILLS.slice(page * PER_HILL, page * PER_HILL + PER_HILL);
+    dieSyncs = [];
+    return el("section", { class: "screen" }, progress(3, page, HILL_SCREENS),
+      el("p", { class: "eyebrow hill", text: `part 4 of 4 · hills · ${page + 1} of ${HILL_SCREENS}` }),
+      el("h2", { text: "Where do you stand?" }),
+      el("p", { class: "sub", text: "Pick the position closest to yours, or pass. Mark up to 3 hills you'd die on." }),
+      el("div", { class: "items" }, list.map(hillItem)),
+      nav(() => (page === 0 ? go("bduel", H.BOTTOM_DUELS - 1) : go("hills", page - 1)),
+          () => (page + 1 < HILL_SCREENS ? go("hills", page + 1) : go("results")),
+          () => list.every(h => S.hills[h.i] !== null),
+          () => `${list.filter(h => S.hills[h.i] !== null).length} of ${list.length} answered · ${S.die.length} of 3 hills to die on`,
+          page + 1 < HILL_SCREENS ? "Next" : "See my results"));
+  }
+  function hillItem(h) {
+    const stops = el("div", { class: "stops", role: "radiogroup", "aria-label": h.q });
+    const passBtn = el("button", { type: "button", class: "pass", text: "pass" });
+    const dieBtn = el("button", { type: "button", class: "die" }, "⛰ hill I'd die on");
+    const dieSync = () => {
+      const on = S.die.includes(h.i);
+      dieBtn.setAttribute("aria-pressed", String(on));
+      dieBtn.disabled = !on && !(S.hills[h.i] > 0 && S.die.length < 3);
+    };
+    dieSyncs.push(dieSync);
+    const sync = () => {
+      stops.querySelectorAll("button").forEach((b, k) => b.setAttribute("aria-checked", String(S.hills[h.i] === k + 1)));
+      passBtn.setAttribute("aria-pressed", String(S.hills[h.i] === 0));
+      dieSyncs.forEach(f => f()); updateNav();
+    };
+    h.stops.forEach((s, k) => stops.append(el("button", { type: "button", class: "stop", role: "radio",
+      onclick: () => { S.hills[h.i] = k + 1; save(); sync(); } }, el("span", { class: "dot", "aria-hidden": "true" }), el("span", { class: "lab", text: s }))));
+    passBtn.addEventListener("click", () => { S.hills[h.i] = S.hills[h.i] === 0 ? null : 0; S.die = S.die.filter(x => x !== h.i); save(); sync(); });
+    dieBtn.addEventListener("click", () => {
+      if (S.die.includes(h.i)) S.die = S.die.filter(x => x !== h.i); else if (S.die.length < 3 && S.hills[h.i] > 0) S.die = S.die.concat(h.i);
+      save(); sync();
+    });
+    const box = el("div", { class: "item hillbox" }, el("p", { class: "q" }, el("span", { class: "hnum", text: "H" + (h.i + 1) }), h.q), stops,
+      el("div", { class: "hilltools" }, passBtn, dieBtn));
+    sync();
+    return box;
+  }
+
+  // --- results ----------------------------------------------------------------------------------------------------------
+  function me() { return { piles: S.piles, top: S.top, duels: S.duels, bottom: S.bottom, bottomDuels: S.bottomDuels,
+                           hills: S.hills.map(x => (x === null ? 0 : x)), die: S.die, name: S.name, pick: S.pick === undefined ? null : S.pick }; }
+  const list = xs => (xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1]);
+  function becauseLine(t) {
+    const part = (a, k) => `${H.AREAS[a].name.toLowerCase()} (${t.because[k].length ? list(t.because[k].map(i => V(i).name)) : "your hills"})`;
+    return t.areas.length === 1 ? `Your top values sit in one area: ${part(t.areas[0], 0)}.` : `From ${part(t.areas[0], 0)} and ${part(t.areas[1], 1)}.`;
+  }
+  // What the hills added to each area, most first; and in one line for the type card: whether they tipped the type, or where
+  // they added the most. The exact numbers go with the hills.
+  const hillAdds = t => t.hillPoints.map((x, a) => [x, a]).filter(([x]) => x > 0).sort((x, y) => (y[0] - x[0]) || (x[1] - y[1]));
+  function hillsLine(p, r) {
+    const t = r.type, without = H.typeOf(r.top5, H.topSet(p.piles), null, null, p.pick), added = hillAdds(t);
+    if (!added.length) return null;
+    if (without.name !== t.name) return `Your hills tipped it: without them you'd be ${without.name}.`;
+    return `Your hills added the most to ${list(added.filter(([x]) => x === added[0][0]).slice(0, 3).map(([, a]) => H.AREAS[a].name.toLowerCase()))}.`;
+  }
+  function evidenceLine(e) {
+    const marks = `most you on ${e.most} of ${e.shown} screens` + (e.least ? `, least on ${e.least}` : "");
+    const duels = e.duels ? ` · won ${e.won} of ${e.duels} face-off${e.duels === 1 ? "" : "s"}` : "";
+    return marks + duels;
+  }
+  function areaBars(r, t) {
+    const order = r.areas.map((x, a) => a).sort((a, b) => (r.areas[b] - r.areas[a]) || (a - b));
+    return el("div", { class: "bars" }, order.map(a => el("div", { class: "bar-row" + (t.areas.includes(a) ? " lead" : "") },
+      el("span", { class: "bar-name", text: H.AREAS[a].name }),
+      el("span", { class: "bar-track", "aria-hidden": "true" }, el("span", { class: "bar", style: `width:${r.areas[a]}%` })),
+      el("span", { class: "bar-num", text: String(r.areas[a]) }))));
+  }
+  function stanceMap(p, other, an, bn) {
+    return H.GROUPS.map((g, gi) => el("div", { class: "group" }, el("h4", { text: g }),
+      H.HILLS.filter(h => h.group === gi).map(h => {
+        const mine = p.hills[h.i], theirs = other ? other.hills[h.i] : null;
+        return el("div", { class: "stance" },
+          el("p", { class: "q" }, el("span", { class: "hnum", text: "H" + (h.i + 1) }), h.q, p.die.includes(h.i) ? el("span", { class: "badge", text: other ? "⛰ " + (an || "you") : "⛰ die on" }) : null,
+            other && other.die.includes(h.i) ? el("span", { class: "badge them", text: "⛰ " + (bn || other.name || "them") }) : null),
+          mine === 0 && (!other || theirs === 0) ? el("p", { class: "passed", text: "passed" }) :
+          [el("div", { class: "track" }, h.stops.map((s, k) => el("span", { class: "tstop" + (mine === k + 1 ? " me" : "") + (other && theirs === k + 1 ? " them" : "") },
+            el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { class: "tlab", text: s }),
+            mine === k + 1 ? el("span", { class: "sr", text: ` (${other ? an || "you" : "you"})` }) : null, other && theirs === k + 1 ? el("span", { class: "sr", text: ` (${bn || other.name || "them"})` }) : null))),
+           !other && mine > 0 ? el("p", { class: "leans", text: mine === 2 ? `The middle holds both: ${V(h.lean[0]).name} and ${V(h.lean[1]).name}.` : `Usually leans on ${V(h.lean[mine === 1 ? 0 : 1]).name}.` }) : null]);
+      })));
+  }
+  function codeBox() {
+    const out = el("input", { class: "code", id: "mycode", readonly: true, value: H.encode(me()), "aria-label": "your results code" });
+    const link = canLink ? el("input", { class: "code", id: "mylink", readonly: true, value: linkFor(out.value), "aria-label": "your results link" }) : null;
+    const name = el("input", { class: "name", id: "myname", type: "text", maxlength: 20, placeholder: "your name (optional)", value: S.name,
+      oninput: e => { S.name = e.target.value; save(); out.value = H.encode(me()); if (link) link.value = linkFor(out.value); } });
+    const msg = el("span", { class: "copied", "aria-live": "polite" });
+    const copy = (field, what) => el("button", { type: "button", class: "btn", text: "Copy " + what, onclick: () => {
+      const done = () => { msg.textContent = what === "link" ? "Link copied" : "Code copied"; };
+      const by = () => { field.select(); msg.textContent = "Selected: copy it with your keyboard"; };
+      try { navigator.clipboard.writeText(field.value).then(done, by); } catch (e) { by(); }
+    } });
+    return el("div", { class: "codebox" }, el("label", { for: "myname", text: "Put your name on it" }), name,
+      link ? [el("label", { for: "mylink", text: "Your results link" }), el("div", { class: "coderow" }, link, copy(link, "link"))] : null,
+      el("label", { for: "mycode", text: "Your code" }), el("div", { class: "coderow" }, out, copy(out, "code")), msg);
+  }
+  // The type card. A close call (the second and third areas within MARGIN points) shows both types and asks which one is you;
+  // the sort's reading is listed first. Once picked, the card says so and offers to change it.
+  function typeCard(p, r, t, own = true) {
+    const area = a => H.AREAS[a].name.toLowerCase();
+    if (t.close && t.close.picked === null) {
+      const [b, c] = t.close.options.map(o => o.area);
+      const within = `${H.AREAS[t.close.first].name} leads, and ${area(b)} and ${area(c)} are within ${H.MARGIN === 1 ? "a point" : H.MARGIN + " points"} of each other, so the test won't choose`;
+      return el("div", { class: "typecard pick" },
+        el("p", { class: "eyebrow", text: "your type is a close call" }),
+        el("p", { class: "tfrom", text: own ? `${within} for you. Which of these is you?` : `${within}, and no pick was saved with these results.` }),
+        el("div", { class: "pick-row" }, t.close.options.map(o => el("div", { class: "pick-opt", "data-area": String(o.area) },
+          el("h2", { text: o.name }),
+          el("p", { class: "tline", text: o.line }),
+          el("p", { class: "tfrom", text: becauseLine(o) }),
+          own ? el("button", { class: "btn", type: "button", text: "This one is me", onclick: () => { S.pick = o.area; save(); render(); } }) : null))));
+    }
+    const other = t.close ? t.close.options.find(o => o.area !== t.close.picked) : null;
+    return el("div", { class: "typecard" },
+      el("p", { class: "eyebrow", text: t.close ? "your type, your pick" : "your type" }),
+      el("h1", { text: t.name }),
+      el("p", { class: "tline", text: t.line }),
+      el("p", { class: "tfrom", text: becauseLine(t) }),
+      hillsLine(p, r) ? el("p", { class: "tfrom", text: hillsLine(p, r) }) : null,
+      other ? el("p", { class: "tfrom picked" }, `You picked it over ${other.name}: the two were within ${H.MARGIN === 1 ? "a point" : H.MARGIN + " points"}. `,
+        own ? el("button", { class: "btn ghost onType", type: "button", text: "Change", onclick: () => { S.pick = null; save(); render(); } }) : null) : null);
+  }
+  function results() {
+    if (!finished()) { setTimeout(resume, 0); return el("p", { text: "One moment…" }); }
+    const p0 = me(), r0 = H.result(p0);
+    if (p0.pick !== null && !(r0.type.close && r0.type.close.picked === p0.pick)) { S.pick = null; save(); }
+    whereNote = el("p", { class: "note" });
+    refreshWhere();
+    return resultsPage(me(), null);
+  }
+  // One person's results: the visitor's own (code null), or a shared link's (its code), which is the same page with a note on
+  // top saying whose it is, none of the owner's controls, and nothing saved.
+  function resultsPage(p, code) {
+    const own = code === null, r = H.result(p), t = r.type;
+    const core = r.ranked.filter(i => !r.top5.includes(i));
+    return el("section", { class: "results" },
+      own ? null : sharedNote(p, code),
+      typeCard(p, r, t, own),
+      el("section", { class: "block" }, el("h2", { text: "Your top 5" }),
+        el("p", { class: "sub", text: "Worked out from your choices, not picked. Each one says how it got here, and how sure the test is about it." }),
+        el("ol", { class: "top" }, r.top5.map(i => { const e = r.evidence(i); return el("li", {},
+          el("div", { class: "tophead" }, el("b", { text: V(i).name }), el("span", { class: "sure s-" + e.word.replace(" ", "-"), text: e.word })),
+          el("span", { class: "vline", text: V(i).line }), el("p", { text: V(i).you }), el("p", { class: "ev", text: evidenceLine(e) })); })),
+        r.close.length ? el("p", { class: "close" }, el("b", { text: "Almost made it: " }), list(r.close.map(i => V(i).name)),
+          ". Close enough that taking it again could swap one of these with your number 5.") : null),
+      el("section", { class: "block" }, el("h2", { text: "Your core" }),
+        el("p", { class: "sub", text: "The rest of your “so me” pile, in the order your choices put it." }),
+        el("ul", { class: "corelist" }, core.map(i => el("li", {}, el("b", { text: V(i).name }), el("span", { text: V(i).line }))))),
+      el("section", { class: "block" }, el("h2", { text: "Where your heart is" }),
+        el("p", { class: "sub", text: "How far toward “so me” you sorted each area's cards: 100 is every card “so me”, 0 every card “not me”. Your type's areas are marked." }),
+        areaBars(r, t),
+        el("p", { class: "rule", text: `Your type comes from where your top 5 sit (5 points for your number 1, down to 1 for your number 5, and half a point for each other “so me” card), plus your hills (${H.HILL_PT} of a point for each hill you answered at one end, ${H.DIE_PT} for a hill you'd die on, at most ${H.HILL_CAP} for any one area). The two areas with the most points name it; when the first has more than ${1 / H.SOLO} times the second's, it's that area's own type. When the second and third are within ${H.MARGIN === 1 ? "a point" : H.MARGIN + " points"} of each other, you pick between the two types. ${H.AREAS.length} areas, ${H.PURE.length + Object.keys(H.PAIRS).length} types.` })),
+      el("section", { class: "block" }, el("h2", { text: "Five you could live without" }),
+        el("ol", { class: "bottom" }, r.bottom5.map(i => el("li", {}, el("b", { text: V(i).name }), " · ", V(i).line))),
+        el("p", { class: "sub", text: "Least you first. Low here doesn't mean against. It means it's not what you'd build your life around." })),
+      el("section", { class: "block" }, el("h2", { text: "Your hills" }),
+        p.die.length ? el("p", { class: "sub" }, "Hills you'd die on: ", p.die.map(i => H.HILLS[i].q).join(", "), ".") : el("p", { class: "sub", text: "You didn't mark any hills to die on. Flexible of you." }),
+        hillAdds(t).length ? el("p", { class: "sub", text: `What they added to your type: ${list(hillAdds(t).map(([x, a]) => `${H.AREAS[a].name} +${x}`))}.` }) : null,
+        stanceMap(p)),
+      own ? el("section", { class: "block" }, el("h2", { text: canLink ? "Share it, and compare with a friend" : "Keep it, and compare with a friend" }),
+        whereNote,
+        canLink ? el("p", { class: "sub", text: "Your link opens these results for whoever you send it to. To compare, send your code to someone who took it too, and paste theirs below. Both hold your answers and your name if you add one, and nothing else about you." })
+                : el("p", { class: "sub", text: "Send your code to someone who took it too, and paste theirs below. The code holds your answers and your name if you add one, and nothing else." }),
+        codeBox(),
+        el("div", { class: "row-btns" }, el("button", { type: "button", class: "btn primary", text: "Compare codes", onclick: () => { S.mine = H.encode(me()); save(); go("compare"); } }),
+          el("button", { type: "button", class: "btn ghost", text: "Change my hills", onclick: () => go("hills", 0) }))) : null,
+      el("details", { class: "how" }, el("summary", { text: "How this works" }),
+        el("p", { text: `The sort puts every card in a pile. The ${H.MIN_PILE} to ${H.MAX_PILE} in “so me” then meet each other on screens of four, ${H.TOP_REPS} times each, and you mark the most and the least like you. ${H.DUELS} face-offs follow, each one at the closest call so far near the edge of your top 5; two wishes of the same size are offered as wishes, and a wish for the world against one about your own life becomes a question about which is more you. A Bradley-Terry fit (a standard way to rank from pairwise choices) turns all of it into one order. The “not me” pile goes through the same, with ${H.BOTTOM_REPS} screens per card and ${H.BOTTOM_DUELS} face-offs.` }),
+        el("p", { text: "Sure means the value would beat your number 6 at least 3 times in 4, by the fit; likely, at least 3 in 5; close call, less than that. Before you played this, made-up players whose real values were known took it, and the marks were checked against them." })));
+  }
+
+  // --- a shared link's page ------------------------------------------------------------------------------------------------
+  // The visitor's way back to their own: their results if they have finished, their answers if they have started, else the test.
+  function ownButton(kind) {
+    const label = finished() ? "See my own results" : hasAnswers() ? "Back to my own answers" : "Take the test yourself";
+    return el("button", { type: "button", class: "btn " + (kind || "ghost"), text: label, onclick: () => { leaveShared(); render(); window.scrollTo(0, 0); } });
+  }
+  function sharedButtons(code) {
+    return el("div", { class: "row-btns" }, ownButton(),
+      code && finished() ? el("button", { type: "button", class: "btn ghost", text: "Compare with mine",
+        onclick: () => { S.mine = H.encode(me()); S.theirs = code; leaveShared(); go("compare"); } }) : null);
+  }
+  function sharedNote(p, code) {
+    const who = (p.name || "").trim();
+    return el("div", { class: "shared-note" },
+      el("p", { class: "eyebrow", text: "Wayfinder · shared results" }),
+      el("p", { text: who ? `${who}'s results, from a link. They're written to ${who}, so “you” below means them.`
+                          : "Results from a link. They're written to whoever took the test, so “you” below means them." }),
+      sharedButtons(code));
+  }
+  function sharedPair(a, b) {
+    const an = (a.name || "").trim() || "the first", bn = (b.name || "").trim() || "the second";
+    return el("section", { class: "results" },
+      el("div", { class: "shared-note" },
+        el("p", { class: "eyebrow", text: "Wayfinder · two results, side by side" }),
+        el("p", { text: "From a link. The lines below are written to the two people who took the test, so “you” means them." }),
+        sharedButtons(null)),
+      comparison(a, b, an, bn));
+  }
+  function sharedError(message) {
+    return el("section", { class: "screen" },
+      el("p", { class: "eyebrow", text: "Wayfinder · shared results" }),
+      el("h2", { text: "This link's code couldn't be read." }),
+      el("p", { class: "err", text: message }),
+      el("p", { class: "sub", text: "Links sometimes get cut when they're copied. Asking for it again usually fixes that." }),
+      el("div", { class: "row-btns" }, ownButton("primary")));
+  }
+  function sharedView(sh) {
+    const people = [];
+    for (const c of sh.codes) { try { people.push(H.decode(c)); } catch (e) { return sharedError(e.message); } }
+    return people.length === 2 ? sharedPair(people[0], people[1]) : resultsPage(people[0], sh.codes[0]);
+  }
+
+  // --- compare ------------------------------------------------------------------------------------------------------------
+  function compareScreen() {
+    const mine = el("textarea", { id: "c-mine", rows: 2, placeholder: H.PREFIX + "…", text: S.mine || (finished() ? H.encode(me()) : "") });
+    const theirs = el("textarea", { id: "c-theirs", rows: 2, placeholder: H.PREFIX + "…", text: S.theirs });
+    const out = el("div", { class: "cmp-out", "aria-live": "polite" });
+    function run() {
+      S.mine = mine.value.trim(); S.theirs = theirs.value.trim(); save();
+      let a, b;
+      try { a = H.decode(S.mine); } catch (e) { out.replaceChildren(el("p", { class: "err", text: "Your code: " + e.message })); return; }
+      try { b = H.decode(S.theirs); } catch (e) { out.replaceChildren(el("p", { class: "err", text: "Their code: " + e.message })); return; }
+      out.replaceChildren(comparison(a, b));
+    }
+    const screen = el("section", { class: "screen" },
+      el("p", { class: "eyebrow", text: "compare" }), el("h2", { text: "Two hearts, side by side" }),
+      el("label", { for: "c-mine", text: "Your code" }), mine, el("label", { for: "c-theirs", text: "Their code" }), theirs,
+      el("div", { class: "row-btns" }, el("button", { type: "button", class: "btn primary", text: "Compare", onclick: run }),
+        el("button", { type: "button", class: "btn ghost", text: finished() ? "Back to my results" : "Back", onclick: () => go(finished() ? "results" : "intro") })),
+      out);
+    if (S.mine && S.theirs) setTimeout(run, 0);
+    return screen;
+  }
+  // Two people side by side: everything a results page shows, for each of them, in the same order, with what they share marked.
+  // The lists sit in two columns (stacked at phone width), and the category chart pairs their bars area by area.
+  function comparison(a, b, an0, bn0) {
+    const c = H.compare(a, b), an = an0 || a.name || "you", bn = bn0 || b.name || "them";
+    const names = is => list(is.map(i => V(i).name));
+    const ppl = [{ p: a, r: c.a, who: an, k: "a" }, { p: b, r: c.b, who: bn, k: "b" }];
+    const other = x => ppl[x.k === "a" ? 1 : 0];
+    const core = x => x.r.ranked.filter(i => !x.r.top5.includes(i));
+    const cols = (part, body) => el("div", { class: "cmp-cols", "data-part": part }, ppl.map(x => el("div", {}, el("h4", { text: x.who }), body(x))));
+    const item = (i, shared) => el("li", { class: shared ? "shared" : "" }, el("b", { text: V(i).name }));
+    const within = H.MARGIN === 1 ? "a point" : H.MARGIN + " points";
+    return el("div", { class: "cmp" },
+      el("div", { class: "cmp-types" }, ppl.map(x => {
+        const t = x.r.type, rival = t.close ? t.close.options.find(o => o.name !== t.name) : null;
+        return el("div", { class: "typecard small" + (x.k === "b" ? " them" : ""), "data-who": x.k },
+          el("p", { class: "eyebrow", text: x.who }), el("h3", { text: t.name }), el("p", { class: "tline", text: t.line }),
+          el("p", { class: "tfrom", text: becauseLine(t) }),
+          hillsLine(x.p, x.r) ? el("p", { class: "tfrom", text: hillsLine(x.p, x.r) }) : null,
+          rival ? el("p", { class: "tfrom", text: t.close.picked !== null ? `Picked over ${rival.name}: the two were within ${within}.` : `A close call with ${rival.name}, within ${within}, and no pick yet.` }) : null);
+      })),
+      el("p", { class: "agree" }, el("b", { text: c.agree + "%" }), ` alike in the sort: ${c.word}.`),
+      el("section", { class: "block" }, el("h3", { text: "Your top 5s" }),
+        cols("top", x => el("ol", { "data-who": x.k }, x.r.top5.map(i => { const e = x.r.evidence(i);
+          return el("li", { class: c.sharedTop.includes(i) ? "shared" : "" }, el("b", { text: V(i).name }), " ", el("span", { class: "sure s-" + e.word.replace(" ", "-"), text: e.word })); }))),
+        el("p", { class: "sub", text: c.sharedTop.length ? `In both top 5s: ${names(c.sharedTop)}.` : "No value in both top 5s." }),
+        ppl.filter(x => x.r.close.length).map(x => el("p", { class: "sub" }, el("b", { text: `Almost made it, ${x.who}: ` }), names(x.r.close), ".")),
+        c.bothSoMe.length ? el("p", { class: "sub", text: `Both of you sorted these into “so me”: ${names(c.bothSoMe)}.` }) : null,
+        c.split.length ? el("p", { class: "sub", text: `Where you split hardest (one “so me”, one “not me”): ${names(c.split)}.` }) : null),
+      el("section", { class: "block" }, el("h3", { text: "Your cores" }),
+        el("p", { class: "sub", text: "The rest of each “so me” pile, in the order each one's choices put it. Marked: “so me” for the other one too." }),
+        cols("core", x => el("ol", { "data-who": x.k, start: 6 }, core(x).map(i => item(i, H.topSet(other(x).p.piles).includes(i)))))),
+      el("section", { class: "block" }, el("h3", { text: "Where your hearts are" }),
+        el("p", { class: "sub", text: "How far toward “so me” each of you sorted each area's cards: 100 is every card “so me”, 0 every card “not me”." }),
+        el("div", { class: "cmp-bars" }, legend(an, bn, false),
+          H.AREAS.map((_, k) => k).sort((x, y) => (c.a.areas[y] + c.b.areas[y]) - (c.a.areas[x] + c.b.areas[x]) || x - y).map(k =>
+            el("div", { class: "cbar-row", "data-area": String(k) },
+              el("span", { class: "bar-name", text: H.AREAS[k].name }),
+              el("span", { class: "cbar-pair" }, ppl.map(x => el("span", { class: "cbar-line" },
+                el("span", { class: "bar-track", "aria-hidden": "true" }, el("span", { class: "bar " + x.k, style: `width:${x.r.areas[k]}%` })),
+                el("span", { class: "sr", text: x.who + ": " }),
+                el("span", { class: "bar-num", "data-who": x.k, text: String(x.r.areas[k]) })))))))),
+      el("section", { class: "block" }, el("h3", { text: "Five you could each live without" }),
+        cols("bottom", x => el("ol", { "data-who": x.k }, x.r.bottom5.map(i => item(i, other(x).r.bottom5.includes(i))))),
+        el("p", { class: "sub", text: "Least first. Marked: in both. Low here doesn't mean against." })),
+      el("section", { class: "block", "data-part": "hills" }, el("h3", { text: "Your hills" }),
+        el("p", { class: "sub", text: `You both answered ${c.answeredBoth} of ${H.HILLS.length}: the same stop on ${c.same.length}, opposite ends on ${c.opposite.length}.`
+          + (c.bothDie.length ? ` A hill you'd both die on: ${c.bothDie.map(i => H.HILLS[i].q).join(", ")}.` : "") }),
+        ppl.map(x => el("p", { class: "sub die-line", "data-who": x.k }, el("b", { text: x.who }), " · ",
+          x.p.die.length ? `Hills to die on: ${x.p.die.map(i => H.HILLS[i].q).join(", ")}.` : "No hills marked to die on.",
+          hillAdds(x.r.type).length ? ` What the hills added to the type: ${list(hillAdds(x.r.type).map(([v, ar]) => `${H.AREAS[ar].name} +${v}`))}.` : "")),
+        c.why.length ? el("ul", { class: "why" }, c.why.map(w => el("li", {}, el("b", { text: H.HILLS[w.hill].q + ": " }),
+          `${an} leaned on ${V(w.a).name}, ${bn} on ${V(w.b).name}.`))) : null,
+        legend(an, bn, true),
+        stanceMap(a, b, an, bn)));
+  }
+  // Who is which colour: squares for the chart's bars, dots for the hills (a filled dot and a ring, as on each hill's line).
+  function legend(an, bn, dots) {
+    return el("p", { class: "cmp-legend" }, el("span", { class: dots ? "key me" : "key sq ka", "aria-hidden": "true" }), an,
+      el("span", { class: dots ? "key them" : "key sq kb", "aria-hidden": "true" }), bn);
+  }
+
+  // --- render -------------------------------------------------------------------------------------------------------------
+  function render() {
+    refresh = null; whereNote = null; erasing = false;
+    if (shared) {
+      let shown;
+      try { shown = sharedView(shared); } catch (e) { shown = sharedError(e && e.message ? e.message : "Something in it didn't add up."); }
+      app.replaceChildren(shown);
+      return;
+    }
+    let view;
+    try {
+      switch (S.step) {
+        case "sort": view = sort(Math.min(S.page, H.ORDER.length - 1)); break;
+        case "narrow": view = NARROW[S.page] && NARROW[S.page].need() ? narrow(S.page) : (setTimeout(narrowNext, 0), el("p", { text: "One moment…" })); break;
+        case "top": view = sortDone() ? (syncSets(), bwScreen("top", Math.min(S.page, topScreens().length - 1))) : (setTimeout(resume, 0), el("p", { text: "One moment…" })); break;
+        case "duel": view = topDone() && S.page <= S.duels.length ? duelScreen("duel", S.page) : (setTimeout(resume, 0), el("p", { text: "One moment…" })); break;
+        case "bottom": view = duelsDone() ? (syncSets(), bwScreen("bottom", Math.min(S.page, bottomScreens().length - 1))) : (setTimeout(resume, 0), el("p", { text: "One moment…" })); break;
+        case "bduel": view = bottomDone() && S.page <= S.bottomDuels.length ? duelScreen("bduel", S.page) : (setTimeout(resume, 0), el("p", { text: "One moment…" })); break;
+        case "hills": view = hills(Math.min(S.page, HILL_SCREENS - 1)); break;
+        case "results": view = results(); break;
+        case "compare": view = compareScreen(); break;
+        default: view = intro();
+      }
+    } catch (e) {
+      view = el("section", { class: "screen" }, el("h2", { text: "Something went wrong on this screen." }),
+        el("p", { class: "sub", text: "Your answers are still saved. " + (e && e.message ? e.message : "") }),
+        el("div", { class: "row-btns" }, el("button", { type: "button", class: "btn primary", text: "Pick up where I left off", onclick: () => resume() })));
+    }
+    app.replaceChildren(view);
+    if (hasAnswers()) app.append(resetBar());
+  }
+  render();
+})();
+
+</script>
+</body>
+</html>

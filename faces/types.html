@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="canonical" href="https://tests.kitsparkles.com/faces/types.html">
+<meta name="description" content="The 44 types the Faces test can name, each with faces from the test.">
+<meta name="referrer" content="no-referrer">
+<title>Meet the types</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='%2322282a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..800&display=swap">
+<style>
+
+:root {
+  --paper: #f3f6f1; --card: #fcfdfb; --ink: #1d2420; --muted: #57645d; --rule: #cbd9cf;
+  --form: #2c7a56; --form-ink: #1d5f41; --form-tint: #e1eee5; --pencil: #22282a;
+  --warn: #7f5200; --warn-tint: #f4e8cf;
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1412; --card: #161d19; --ink: #e3ebe6; --muted: #9eaca4; --rule: #28342d;
+  --form: #63c193; --form-ink: #8fd8b1; --form-tint: #17291f; --pencil: #e3ebe6;
+  --warn: #e7b85e; --warn-tint: #2b2413; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0f1412; --card: #161d19; --ink: #e3ebe6; --muted: #9eaca4; --rule: #28342d;
+  --form: #63c193; --form-ink: #8fd8b1; --form-tint: #17291f; --pencil: #e3ebe6;
+  --warn: #e7b85e; --warn-tint: #2b2413; color-scheme: dark }
+
+* { box-sizing: border-box }
+html { -webkit-text-size-adjust: 100% }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.55 var(--body); }
+.wrap { max-width: 74rem; margin: 0 auto; padding-inline: 16px; padding-block: max(2rem, env(safe-area-inset-top)) 4rem; }
+@media (min-width: 40rem) { .wrap { padding-inline: 28px } }
+a { color: inherit }
+:focus-visible { outline: 2px solid var(--form); outline-offset: 2px; border-radius: 4px }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+.formline { margin: 0; font: 500 .72rem/1.3 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--form-ink); }
+.bubble { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 1.5px solid var(--form); display: inline-grid; place-items: center;
+          font: 500 .62rem/1 var(--mono); font-style: normal; color: var(--form); flex: none; }
+/* Meet the types: every look, with faces from the test made or chosen to be emblematic of it, filterable (v3, Day 251). */
+[hidden] { display: none !important; }
+:root { --pop: #c7346f; --pop-tint: #f6dbe6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pop: #ff8ab8; --pop-tint: #45202f; } }
+:root[data-theme="dark"] { --pop: #ff8ab8; --pop-tint: #45202f; }
+.back { display: inline-block; font: 500 .8rem/1 var(--mono); color: var(--form-ink); text-decoration: none; padding: .4rem 0; margin-bottom: 1rem; }
+.back:hover { text-decoration: underline; }
+h1 { margin: .4rem 0 .4rem; font: 800 clamp(2.6rem, 10vw, 4.6rem)/.9 var(--display); font-stretch: 66%; text-transform: uppercase; color: var(--form-ink); }
+.lede { color: var(--muted); margin: 0 0 1.4rem; max-width: 40rem; }
+.lede strong { color: var(--ink); }
+.filters { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2;
+           background: var(--paper); padding-block: .7rem; border-bottom: 1px dashed var(--rule); }
+.filters input[type=search], .filters select { font: 500 .85rem var(--mono); color: var(--ink); background: var(--card); border: 1.5px solid var(--rule); border-radius: 999px; padding: .55rem .9rem; }
+.filters input[type=search] { flex: 1 1 12rem; min-width: 0; }
+.seg { display: inline-flex; border: 1.5px solid var(--form); border-radius: 999px; overflow: hidden; }
+.seg button { font: 600 .78rem var(--mono); color: var(--form-ink); background: var(--card); border: 0; padding: .55rem .75rem; cursor: pointer; }
+.seg button[aria-pressed=true] { background: var(--form-ink); color: var(--card); }
+.tog { font: 500 .8rem var(--mono); color: var(--muted); display: inline-flex; gap: .35rem; align-items: center; }
+.count { font: 500 .8rem var(--mono); color: var(--muted); margin: .9rem 0; }
+.grid { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.t { border: 1.5px solid var(--pencil); border-radius: 14px; background: var(--card); padding: .9rem; display: grid; gap: .55rem; align-content: start; position: relative; }
+.t h2 { margin: 0; font: 800 1.45rem/1.05 var(--display); font-stretch: 82%; color: var(--form-ink); text-wrap: balance; }
+.t p { margin: 0; color: var(--muted); font-size: .9rem; }
+.badge { position: absolute; top: -.6rem; right: .8rem; transform: rotate(4deg); background: var(--pop); color: var(--card); font: 700 .62rem/1 var(--mono);
+         letter-spacing: .1em; text-transform: uppercase; padding: .4rem .55rem; border-radius: 999px; }
+.chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.chip { border: 1.5px solid var(--form); border-radius: 999px; padding: .2rem .55rem; background: var(--paper); font-size: .78rem; font-weight: 700; }
+.faces { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem; }
+.all { justify-self: start; font: 600 .7rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: .5rem .7rem; border-radius: 999px;
+       border: 1.5px solid var(--pencil); background: transparent; color: var(--ink); cursor: pointer; }
+.all:hover, .all:focus-visible { background: var(--ink); color: var(--card); }
+.faces img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; display: block; background: var(--rule); }
+.nofaces { font: .75rem var(--mono); color: var(--muted); }
+.revnote { border: 1.5px dashed var(--pop); border-radius: 12px; padding: .7rem .9rem; margin: 0 0 1rem; color: var(--ink); max-width: 40rem; }
+.rf { appearance: none; border: 0; background: none; padding: 0; margin: 0; cursor: pointer; display: grid; gap: .15rem; position: relative; text-align: left; font: inherit; color: inherit; }
+.rf span { font: 500 .56rem/1.2 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.rf.no img { outline: 4px solid var(--pop); outline-offset: -4px; opacity: .45; }
+.rf.no::after { content: "✕"; position: absolute; top: .2rem; right: .3rem; font: 800 1.2rem/1 var(--mono); color: var(--pop); }
+.rf.no span { color: var(--pop); font-weight: 600; }
+.revbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--card); border-top: 2px solid var(--pencil);
+          padding: .6rem 16px calc(env(safe-area-inset-bottom, 0px) + .6rem); display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.revbar span { font: 600 .78rem var(--mono); margin-right: auto; }
+.revbar button { font: 600 .72rem var(--mono); letter-spacing: .05em; text-transform: uppercase; padding: .55rem .8rem; border-radius: 999px; border: 1.5px solid var(--pencil); background: var(--pencil); color: var(--card); cursor: pointer; }
+.revbar button.ghost { background: transparent; color: var(--ink); }
+.revbar button:disabled { opacity: .4; cursor: default; }
+.revtext { font: 500 .78rem/1.5 var(--mono); word-break: break-word; border: 1.5px solid var(--rule); border-radius: 10px; padding: .6rem; margin: 1rem 0 5rem; background: var(--card); user-select: all; }
+body.rev .wrap { padding-bottom: 5rem; }
+.empty { color: var(--muted); }
+
+:root {
+  --paper: #f1efe8; --card: #fbfaf6; --ink: #2a2c36; --muted: #62636e; --rule: #d8d4c8;
+  --form: #9a6700; --form-ink: #6f4a00; --form-tint: #f3e6c4; --pencil: #14151c;
+  --pop: #b0305a; --pop-tint: #f5d9e2; --neg: #b0305a;
+  --gold: #9a6700; --gold-2: #6f4a00; --frame: #14151c; --drop: #d3cdbd;
+  --display: "Literata", Georgia, "Times New Roman", serif; --body: "Literata", Georgia, "Times New Roman", serif;
+  --sky: radial-gradient(circle at 1px 1px, rgba(20, 21, 28, .07) 1px, transparent 1.5px);
+  --sky-size: 22px 22px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1119; --card: #1a1d2b; --ink: #d9d5c9; --muted: #8b889a; --rule: #2c3044;
+  --form: #f2c14e; --form-ink: #ffe39a; --form-tint: #33301f; --pencil: #f4f0e4;
+  --pop: #ff7a9c; --pop-tint: #3b1f2c; --neg: #ff7a9c;
+  --gold: #f2c14e; --gold-2: #ffe39a; --frame: #3a3f58; --drop: #05060a;
+  --sky: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' shape-rendering='crispEdges'%3E%3Cg fill='%23f4f0e4'%3E%3Crect x='17' y='31' width='2' height='2' opacity='.35'/%3E%3Crect x='121' y='12' width='2' height='2' opacity='.22'/%3E%3Crect x='203' y='77' width='2' height='2' opacity='.3'/%3E%3Crect x='66' y='142' width='2' height='2' opacity='.25'/%3E%3Crect x='181' y='198' width='2' height='2' opacity='.35'/%3E%3Crect x='34' y='219' width='2' height='2' opacity='.2'/%3E%3Crect x='143' y='121' width='2' height='2' opacity='.18'/%3E%3C/g%3E%3Cg fill='%23f2c14e' opacity='.5'%3E%3Crect x='92' y='86' width='2' height='8'/%3E%3Crect x='89' y='89' width='8' height='2'/%3E%3Crect x='214' y='161' width='2' height='6'/%3E%3Crect x='212' y='163' width='6' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  --sky-size: 240px 240px; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0f1119; --card: #1a1d2b; --ink: #d9d5c9; --muted: #8b889a; --rule: #2c3044;
+  --form: #f2c14e; --form-ink: #ffe39a; --form-tint: #33301f; --pencil: #f4f0e4;
+  --pop: #ff7a9c; --pop-tint: #3b1f2c; --neg: #ff7a9c;
+  --gold: #f2c14e; --gold-2: #ffe39a; --frame: #3a3f58; --drop: #05060a;
+  --sky: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' shape-rendering='crispEdges'%3E%3Cg fill='%23f4f0e4'%3E%3Crect x='17' y='31' width='2' height='2' opacity='.35'/%3E%3Crect x='121' y='12' width='2' height='2' opacity='.22'/%3E%3Crect x='203' y='77' width='2' height='2' opacity='.3'/%3E%3Crect x='66' y='142' width='2' height='2' opacity='.25'/%3E%3Crect x='181' y='198' width='2' height='2' opacity='.35'/%3E%3Crect x='34' y='219' width='2' height='2' opacity='.2'/%3E%3Crect x='143' y='121' width='2' height='2' opacity='.18'/%3E%3C/g%3E%3Cg fill='%23f2c14e' opacity='.5'%3E%3Crect x='92' y='86' width='2' height='8'/%3E%3Crect x='89' y='89' width='8' height='2'/%3E%3Crect x='214' y='161' width='2' height='6'/%3E%3Crect x='212' y='163' width='6' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  --sky-size: 240px 240px; color-scheme: dark }
+
+body { background-color: var(--paper); background-image: var(--sky); background-size: var(--sky-size); font-family: var(--body); }
+
+
+.typecard, .stat, .codebox, .instr, .facebox, .t, .mc {
+  border: 0 !important; border-radius: 0 !important; background: var(--card);
+  box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame) !important; margin: 3px; }
+.typecard.hero {
+  box-shadow: 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold), -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold),
+              10px 10px 0 0 var(--drop) !important; margin: 4px 14px 14px 4px; }
+.typecard.ick { box-shadow: 0 -3px 0 0 var(--pop), 0 3px 0 0 var(--pop), -3px 0 0 0 var(--pop), 3px 0 0 0 var(--pop) !important; }
+
+
+h1, h2, .typename, .alsoname, .statlabel, .big, .t h2, details.nerd summary { font-family: var(--body) !important; font-stretch: 100% !important; }
+.kicker, .chip, .chip span, .sticker, .mh, .mr, .mc b, .meterends, .badge, .primary, .quiet, .rbtn, .seg button, .count, .back, .progress, .ends, .hint,
+figcaption, .legend2, .ebtn, .eth b, .egroup h3, .editfilters, .editfilters select { font-family: var(--mono) !important; font-stretch: 100% !important; }
+h1 { font-weight: 800 !important; font-style: italic; letter-spacing: -.01em; color: var(--gold-2) !important; text-shadow: 4px 4px 0 var(--drop); text-transform: none !important; }
+h2, .t h2 { font-weight: 700 !important; font-size: 1.4rem !important; letter-spacing: 0; color: var(--gold-2) !important; text-transform: none; }
+.kicker { font-weight: 600 !important; font-size: .74rem !important; letter-spacing: .12em !important; color: var(--gold) !important; display: flex; align-items: center; gap: .45rem; }
+.kicker::before { content: ""; width: 11px; height: 11px; flex: none; background: currentColor;
+  clip-path: polygon(40% 0, 60% 0, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0 60%, 0 40%, 40% 40%); }
+.typecard.ick .kicker { color: var(--pop) !important; }
+.typename { font-weight: 800 !important; font-style: italic; font-size: clamp(2.2rem, 10vw, 3.4rem) !important; line-height: 1 !important; color: var(--gold-2) !important;
+            text-shadow: 3px 3px 0 var(--drop); overflow-wrap: anywhere; }
+.typename span { background: none !important; padding: 0 !important; }
+.typecard.ick .typename { color: var(--pencil) !important; font-size: clamp(1.7rem, 7.5vw, 2.4rem) !important; }
+.alsoname { font-weight: 700 !important; font-style: italic; font-size: 1.2rem !important; letter-spacing: 0; color: var(--gold-2) !important; }
+.typecard.ick .alsoname { color: var(--pencil) !important; }
+.alsoname span, .typecard .sub, .t p, .lede, .sub { font-family: var(--body); }
+.sticker { transform: none !important; border-radius: 0 !important; background: var(--gold) !important; color: var(--paper) !important;
+           font-weight: 600 !important; font-size: .66rem !important; letter-spacing: .12em !important; top: -.85rem !important;
+           box-shadow: 3px 3px 0 0 var(--drop) !important; }
+.badge { transform: none !important; border-radius: 0 !important; background: var(--pop) !important; color: var(--paper) !important; font-size: .56rem !important; }
+
+
+.chip { border: 0 !important; border-radius: 0 !important; background: var(--card) !important; color: var(--ink); font-size: .72rem !important; font-weight: 600 !important;
+        text-transform: uppercase; letter-spacing: .02em; padding: .42rem .5rem !important; margin: 2px;
+        box-shadow: 0 -2px 0 0 var(--gold), 0 2px 0 0 var(--gold), -2px 0 0 0 var(--gold), 2px 0 0 0 var(--gold); }
+.chip span { font-family: var(--display) !important; color: var(--gold-2) !important; }
+.typecard.ick .chip { box-shadow: 0 -2px 0 0 var(--pop), 0 2px 0 0 var(--pop), -2px 0 0 0 var(--pop), 2px 0 0 0 var(--pop); }
+.typecard.ick .chip span { color: var(--pop) !important; }
+.chip.lean { opacity: .72; background: transparent !important; box-shadow: 0 -2px 0 0 var(--muted), 0 2px 0 0 var(--muted), -2px 0 0 0 var(--muted), 2px 0 0 0 var(--muted) !important; }
+
+
+.polaroids figure, .typecard .thumbs figure, .thumbs figure { transform: none !important; border-radius: 0 !important; background: var(--card) !important;
+  padding: 4px 4px 2px !important; box-shadow: 0 0 0 2px var(--frame), 5px 5px 0 0 var(--drop) !important; }
+.thumbs img, .faces img, .facebox img { border-radius: 0 !important; image-rendering: auto; }
+figcaption { font-size: .68rem !important; font-weight: 600; color: var(--gold-2) !important; }
+.also, .stylerow { border-top: 3px dotted var(--frame) !important; }
+
+.mark { border: 0 !important; border-radius: 0 !important; font-family: var(--mono) !important; color: var(--muted) !important; opacity: .9;
+        box-shadow: 0 -2px 0 0 var(--muted), 0 2px 0 0 var(--muted), -2px 0 0 0 var(--muted), 2px 0 0 0 var(--muted); padding: .2rem .4rem !important; margin-left: .5rem !important; }
+
+
+.primary { border-radius: 0 !important; background: var(--gold) !important; color: var(--paper) !important; font-weight: 600 !important; font-size: .78rem !important;
+           text-transform: uppercase; box-shadow: 5px 5px 0 0 var(--drop); }
+.primary:hover { background: var(--gold-2) !important; }
+.quiet { border: 0 !important; border-radius: 0 !important; background: var(--card) !important; color: var(--ink) !important; font-size: .72rem !important;
+         text-transform: uppercase; box-shadow: 0 -2px 0 0 var(--frame), 0 2px 0 0 var(--frame), -2px 0 0 0 var(--frame), 2px 0 0 0 var(--frame); margin: 2px; }
+.primary.danger { background: var(--pop) !important; }
+.primary.danger:hover { background: var(--gold-2) !important; }
+.modalcard { border: 0 !important; border-radius: 0 !important; box-shadow: 0 -4px 0 0 var(--pop), 0 4px 0 0 var(--pop), -4px 0 0 0 var(--pop), 4px 0 0 0 var(--pop), 10px 10px 0 0 var(--drop); }
+.modalcard .kicker { color: var(--pop) !important; }
+.rbtn, .ebtn { border: 0 !important; border-radius: 0 !important; background: var(--card) !important; color: var(--gold-2) !important; font-size: 1.05rem !important;
+        box-shadow: 0 -3px 0 0 var(--frame), 0 3px 0 0 var(--frame), -3px 0 0 0 var(--frame), 3px 0 0 0 var(--frame) !important; margin: 3px; }
+.rbtn:hover, .ebtn:hover { background: var(--form-tint) !important; }
+.rbtn.on, .ebtn.on { background: var(--gold) !important; color: var(--paper) !important; }
+
+.eth { border-radius: 0 !important; background: var(--card) !important; box-shadow: 0 0 0 2px var(--frame); margin: 2px; }
+.eth b { border-radius: 0 !important; background: var(--paper) !important; color: var(--gold-2) !important; }
+.eth.moved { outline: 0 !important; box-shadow: 0 0 0 3px var(--pop) !important; }
+.eth.moved b { background: var(--pop) !important; color: var(--paper) !important; }
+.egroup h3 { color: var(--gold) !important; }
+.editfilters select { border-radius: 0 !important; }
+.editcard { box-shadow: 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold), -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 10px 10px 0 0 var(--drop) !important; }
+.editcard .kicker { color: var(--gold) !important; }
+.bar { border-radius: 0 !important; }
+.bar i { background: var(--gold) !important; }
+.seg { border: 0 !important; border-radius: 0 !important; box-shadow: 0 -2px 0 0 var(--gold), 0 2px 0 0 var(--gold), -2px 0 0 0 var(--gold), 2px 0 0 0 var(--gold); margin: 2px; }
+.seg button { font-size: .68rem !important; text-transform: uppercase; }
+.seg button[aria-pressed=true] { background: var(--gold) !important; color: var(--paper) !important; }
+.filters input[type=search], .filters select, textarea { border-radius: 0 !important; }
+
+
+.statlabel { font-weight: 800 !important; font-style: italic; font-size: 1.4rem !important; color: var(--gold-2) !important; text-transform: none; }
+.big { font-weight: 800 !important; color: var(--gold-2) !important; text-shadow: 3px 3px 0 var(--drop); }
+.meter { border-radius: 0 !important; height: 16px !important;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(5% - 3px), var(--card) calc(5% - 3px) 5%), linear-gradient(90deg, var(--neg), var(--rule) 50%, var(--gold)) !important; }
+.meter i { border-radius: 0 !important; width: 8px !important; height: 28px !important; top: -6px !important; background: var(--pencil) !important; box-shadow: 0 0 0 2px var(--paper) !important; }
+.meter i.f { background: var(--pop) !important; }
+.meterends { font-size: .62rem !important; }
+
+
+.mc { min-height: 4.2rem; }
+.mc b { font-weight: 600 !important; font-size: 1.05rem !important; }
+.mh, .mr { font-size: .64rem !important; text-transform: uppercase; }
+.mapread { font-family: var(--body) !important; color: var(--gold-2) !important; font-style: italic; }
+details.nerd { border-top: 3px dotted var(--frame) !important; }
+details.nerd summary { font-weight: 700 !important; font-size: 1.2rem !important; text-transform: none; color: var(--gold-2); }
+.feat h3 { font-family: var(--mono) !important; color: var(--gold) !important; }
+.fb .b1 { fill: var(--gold) !important; } .fb .b2 { fill: var(--pop) !important; }
+.banner { border-radius: 0 !important; background: var(--form-tint) !important; color: var(--gold-2) !important; font-family: var(--body); }
+a { color: var(--gold-2); }
+#top { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: .5rem; }   
+@media print { .typecard.hero { box-shadow: 0 0 0 3px #9a6700 !important; } body { background-image: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <a class="back" href="./">← Faces</a>
+  <h1>Meet the types</h1>
+  <p class="lede"><strong>44 types</strong>, from everyday to very online. Each is a whole look, shown with faces from the test that wear it, and your results name the ones your ratings point to. Types describe looks, never who anyone is, with five exceptions made on purpose: doll, tech transfem, blåhaj girl, t-boy and gym t-bro. Trans and nonbinary people are all through the rest of the page too (in 31 of the other 39 types).</p>
+  <p class="revnote" id="revnote" hidden><strong>Review mode.</strong> Every face of every type is shown, with its name underneath. Tap any face that doesn't fit its type; tap again to undo. Your marks stay on this device. When you're done, copy the list at the bottom and send it to me.</p>
+  <div class="filters">
+    <input id="q" type="search" placeholder="Search types" aria-label="Search types">
+    <div class="seg" role="group" aria-label="Presentation">
+      <button type="button" data-v="" aria-pressed="true">any</button><button type="button" data-v="fem" aria-pressed="false">femme</button><button type="button" data-v="andro" aria-pressed="false">andro</button><button type="button" data-v="masc" aria-pressed="false">masc</button>
+    </div>
+    <select id="group" aria-label="Kind"><option value="">every kind</option></select>
+  </div>
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
+  <p class="revtext" id="revtext" hidden></p>
+</main>
+<div class="revbar" id="revbar" hidden><span id="revn"></span><button type="button" class="ghost" id="revclear">Clear</button><button type="button" id="revcopy">Copy list</button></div>
+<script>
+const TYPES = [{"name": "femme", "blurb": "feminine on purpose: the hair, the makeup, the outfit", "group": "expression", "pres": ["fem"], "chips": ["very femme", "68 faces"], "faces": ["img/q160.jpg", "img/c-doll-2.jpg", "img/q025.jpg", "img/k-doll-12.jpg", "img/d-witchy-2.jpg", "img/k-emo-3.jpg", "img/k-girl-next-door-2.jpg", "img/k-doll-13.jpg", "img/k-everyday-6.jpg", "img/k-doll-11.jpg", "img/k-everyday-4.jpg", "img/g-e-girl-2.jpg", "img/e-office-siren-1.jpg", "img/d-witchy-1.jpg", "img/k-doll-4.jpg", "img/q057.jpg", "img/k-goth-1.jpg", "img/h-office-siren-1.jpg", "img/k-tech-transfem-6.jpg", "img/k-doll-14.jpg", "img/k-punk-3.jpg", "img/b-dark-academia-2.jpg", "img/d-office-siren-6.jpg", "img/g-e-girl-1.jpg", "img/k-e-girl-4.jpg", "img/k-doll-6.jpg", "img/h-raver-4.jpg", "img/d-cottagecore-3.jpg", "img/k-goth-5.jpg", "img/k-everyday-7.jpg", "img/k-goth-6.jpg", "img/q053.jpg", "img/q032.jpg", "img/k-doll-8.jpg", "img/d-futch-6.jpg", "img/h-e-girl-1.jpg", "img/h-raver-1.jpg", "img/e-hot-mom-1.jpg", "img/d-office-siren-3.jpg", "img/d-hot-mom-6.jpg", "img/h-emo-4.jpg", "img/g-e-girl-7.jpg", "img/d-pilates-princess-3.jpg", "img/k-witchy-2.jpg", "img/d-witchy-4.jpg", "img/d-hot-mom-3.jpg", "img/h-e-girl-2.jpg", "img/d-goth-6.jpg", "img/k-blahaj-girl-18.jpg", "img/k-doll-3.jpg", "img/d-office-siren-4.jpg", "img/d-hot-mom-1.jpg", "img/k-emo-4.jpg", "img/b-witchy-2.jpg", "img/k-girl-next-door-7.jpg", "img/k-everyday-5.jpg", "img/d-pilates-princess-6.jpg", "img/c-raver-1.jpg", "img/d-hot-mom-4.jpg", "img/a-pastel-goth-2.jpg", "img/g-e-girl-6.jpg", "img/d-hot-mom-2.jpg", "img/e-raver-2.jpg", "img/h-goth-1.jpg", "img/h-pilates-princess-2.jpg", "img/k-office-siren-3.jpg", "img/k-blahaj-girl-17.jpg", "img/d-cottagecore-1.jpg"], "n": 68}, {"name": "chapstick", "blurb": "low-maintenance and casual, between femme and butch", "group": "expression", "pres": ["fem"], "chips": ["femme-leaning", "72 faces"], "faces": ["img/b-skater-6.jpg", "img/q044.jpg", "img/q129.jpg", "img/g-pilates-princess-2.jpg", "img/k-girl-next-door-3.jpg", "img/h-dark-academia-1.jpg", "img/k-everyday-8.jpg", "img/q118.jpg", "img/k-blahaj-girl-20.jpg", "img/e-skater-2.jpg", "img/k-soccer-mom-5.jpg", "img/k-soccer-mom-6.jpg", "img/k-soccer-mom-3.jpg", "img/q153.jpg", "img/q001.jpg", "img/h-grunge-1.jpg", "img/e-granola-girl-2.jpg", "img/h-grunge-4.jpg", "img/k-soccer-mom-10.jpg", "img/k-tech-transfem-29.jpg", "img/k-tech-transfem-21.jpg", "img/h-grunge-2.jpg", "img/k-tech-transfem-14.jpg", "img/h-granola-girl-1.jpg", "img/k-soccer-mom-1.jpg", "img/k-grunge-3.jpg", "img/q146.jpg", "img/k-blahaj-girl-12.jpg", "img/k-blahaj-girl-24.jpg", "img/k-tech-transfem-10.jpg", "img/k-tech-transfem-20.jpg", "img/g-pilates-princess-1.jpg", "img/k-soccer-mom-4.jpg", "img/k-blahaj-girl-26.jpg", "img/h-dark-academia-4.jpg", "img/q021.jpg", "img/q087.jpg", "img/k-blahaj-girl-23.jpg", "img/k-tech-transfem-28.jpg", "img/k-tech-transfem-22.jpg", "img/q199.jpg", "img/c-gym-rat-3.jpg", "img/c-granola-girl-4.jpg", "img/k-tech-transfem-25.jpg", "img/q155.jpg", "img/k-tech-transfem-23.jpg", "img/q198.jpg", "img/e-granola-girl-1.jpg", "img/c-gym-rat-1.jpg", "img/b-skater-2.jpg", "img/k-girl-next-door-1.jpg", "img/k-soccer-mom-9.jpg", "img/b-cottagecore-2.jpg", "img/b-grunge-1.jpg", "img/k-blahaj-girl-27.jpg", "img/h-pilates-princess-1.jpg", "img/e-granola-girl-4.jpg", "img/h-gym-rat-1.jpg", "img/k-girl-next-door-4.jpg", "img/e-cottagecore-1.jpg", "img/k-tech-transfem-26.jpg", "img/k-tech-transfem-30.jpg", "img/h-cottagecore-1.jpg", "img/d-cottagecore-2.jpg", "img/q095.jpg", "img/k-blahaj-girl-25.jpg", "img/q113.jpg", "img/c-granola-girl-3.jpg", "img/b-emo-2.jpg", "img/k-tech-transfem-27.jpg", "img/k-girl-next-door-6.jpg", "img/h-skater-4.jpg"], "n": 72}, {"name": "futch", "blurb": "butch and femme at once, on purpose", "group": "expression", "pres": ["andro"], "chips": ["androgynous", "20 faces"], "faces": ["img/k-futch-1.jpg", "img/d-futch-2.jpg", "img/d-futch-4.jpg", "img/k-futch-10.jpg", "img/h-futch-7.jpg", "img/d-futch-8.jpg", "img/h-futch-2.jpg", "img/h-futch-3.jpg", "img/h-punk-1.jpg", "img/d-futch-5.jpg", "img/k-futch-8.jpg", "img/b-emo-4.jpg", "img/h-futch-6.jpg", "img/h-futch-1.jpg", "img/q097.jpg", "img/k-futch-9.jpg", "img/q068.jpg", "img/b-punk-1.jpg", "img/h-futch-4.jpg", "img/k-futch-7.jpg"], "n": 20}, {"name": "soft butch", "blurb": "masc of center, soft around the edges", "group": "expression", "pres": ["masc"], "chips": ["masc-leaning", "23 faces"], "faces": ["img/b-soft-butch-1.jpg", "img/c-soft-butch-1.jpg", "img/d-soft-butch-1.jpg", "img/q125.jpg", "img/c-soft-butch-3.jpg", "img/h-skater-2.jpg", "img/q002.jpg", "img/h-dark-academia-5.jpg", "img/d-soft-butch-2.jpg", "img/q075.jpg", "img/q126.jpg", "img/q077.jpg", "img/b-butch-3.jpg", "img/q055.jpg", "img/h-he-they-mullet-4.jpg", "img/d-butch-5.jpg", "img/c-butch-1.jpg", "img/q037.jpg", "img/b-soft-butch-4.jpg", "img/b-soft-butch-3.jpg", "img/q180.jpg", "img/q093.jpg", "img/h-androgynous-icon-3.jpg"], "n": 23}, {"name": "butch", "blurb": "masc of center, all the way", "group": "expression", "pres": ["masc"], "chips": ["very masc", "11 faces"], "faces": ["img/d-butch-1.jpg", "img/d-butch-2.jpg", "img/d-butch-3.jpg", "img/d-butch-7.jpg", "img/c-butch-2.jpg", "img/h-butch-2.jpg", "img/d-butch-4.jpg", "img/b-butch-2.jpg", "img/h-butch-3.jpg", "img/h-butch-1.jpg", "img/h-punk-3.jpg"], "n": 11}, {"name": "androgynous icon", "blurb": "you genuinely can't tell, and that's the point", "group": "expression", "pres": ["andro"], "chips": ["androgynous", "18 faces"], "faces": ["img/q050.jpg", "img/h-androgynous-icon-1.jpg", "img/h-androgynous-icon-2.jpg", "img/b-punk-2.jpg", "img/q103.jpg", "img/q114.jpg", "img/g-gender-goblin-1.jpg", "img/b-e-boy-5.jpg", "img/h-gender-goblin-4.jpg", "img/q036.jpg", "img/q033.jpg", "img/q062.jpg", "img/h-emo-3.jpg", "img/q151.jpg", "img/g-gender-goblin-4.jpg", "img/g-gender-goblin-3.jpg", "img/h-gender-goblin-1.jpg", "img/g-gender-goblin-2.jpg"], "n": 18}, {"name": "soft boy", "blurb": "masculine with a soft edge: knits, longer hair, a gentle look", "group": "expression", "pres": ["andro", "masc"], "chips": ["androgynous to masc-leaning", "53 faces"], "faces": ["img/q112.jpg", "img/q081.jpg", "img/q122.jpg", "img/b-dark-academia-4.jpg", "img/q173.jpg", "img/e-raver-1.jpg", "img/k-tboy-12.jpg", "img/k-tboy-15.jpg", "img/b-grunge-4.jpg", "img/e-skater-1.jpg", "img/q171.jpg", "img/e-twink-1.jpg", "img/k-tboy-14.jpg", "img/k-tboy-2.jpg", "img/h-goth-2.jpg", "img/k-tboy-3.jpg", "img/g-twink-3.jpg", "img/h-he-they-mullet-2.jpg", "img/e-e-boy-1.jpg", "img/h-skater-3.jpg", "img/e-e-boy-3.jpg", "img/k-gym-tguy-5.jpg", "img/c-tech-bro-6.jpg", "img/h-skater-1.jpg", "img/g-e-boy-1.jpg", "img/h-witchy-1.jpg", "img/k-tboy-1.jpg", "img/k-tboy-10.jpg", "img/g-e-boy-4.jpg", "img/q197.jpg", "img/q110.jpg", "img/h-goth-3.jpg", "img/g-twink-2.jpg", "img/g-e-boy-2.jpg", "img/q008.jpg", "img/g-twink-6.jpg", "img/g-twink-1.jpg", "img/h-grunge-5.jpg", "img/h-gender-goblin-2.jpg", "img/g-e-boy-3.jpg", "img/h-raver-5.jpg", "img/q098.jpg", "img/h-emo-2.jpg", "img/k-tboy-11.jpg", "img/e-e-boy-2.jpg", "img/e-otter-1.jpg", "img/h-he-they-mullet-3.jpg", "img/g-twink-5.jpg", "img/q084.jpg", "img/b-cottagecore-6.jpg", "img/h-raver-2.jpg", "img/b-raver-4.jpg", "img/h-otter-1.jpg"], "n": 53}, {"name": "masc", "blurb": "masculine, the classic version", "group": "expression", "pres": ["masc"], "chips": ["very masc", "77 faces"], "faces": ["img/q040.jpg", "img/q116.jpg", "img/q165.jpg", "img/d-cub-3.jpg", "img/c-hot-dad-5.jpg", "img/c-tech-bro-2.jpg", "img/d-otter-6.jpg", "img/d-cub-5.jpg", "img/q185.jpg", "img/c-suburban-dad-5.jpg", "img/k-tboy-13.jpg", "img/b-dark-academia-1.jpg", "img/q111.jpg", "img/k-gym-tguy-3.jpg", "img/q106.jpg", "img/c-bear-2.jpg", "img/q137.jpg", "img/k-golden-retriever-5.jpg", "img/k-golden-retriever-1.jpg", "img/c-punk-3.jpg", "img/c-hot-dad-3.jpg", "img/q071.jpg", "img/c-suburban-dad-3.jpg", "img/d-cub-2.jpg", "img/d-otter-2.jpg", "img/h-tech-bro-1.jpg", "img/c-gym-rat-5.jpg", "img/c-hot-dad-1.jpg", "img/e-tech-bro-1.jpg", "img/q048.jpg", "img/k-gym-tguy-1.jpg", "img/e-tech-bro-2.jpg", "img/h-punk-2.jpg", "img/q047.jpg", "img/h-gym-rat-2.jpg", "img/h-dark-academia-2.jpg", "img/k-golden-retriever-6.jpg", "img/c-suburban-dad-2.jpg", "img/d-otter-4.jpg", "img/d-otter-1.jpg", "img/q136.jpg", "img/c-suburban-dad-1.jpg", "img/d-otter-5.jpg", "img/d-cub-1.jpg", "img/k-gym-tguy-4.jpg", "img/d-tboy-3.jpg", "img/k-golden-retriever-4.jpg", "img/q162.jpg", "img/c-bear-1.jpg", "img/c-hot-dad-4.jpg", "img/k-gym-tguy-2.jpg", "img/c-silver-fox-3.jpg", "img/c-silver-fox-4.jpg", "img/c-gym-rat-4.jpg", "img/c-silver-fox-1.jpg", "img/g-tboy-2.jpg", "img/c-suburban-dad-4.jpg", "img/k-golden-retriever-7.jpg", "img/c-silver-fox-5.jpg", "img/k-golden-retriever-3.jpg", "img/c-bear-4.jpg", "img/c-bear-6.jpg", "img/c-bear-3.jpg", "img/q133.jpg", "img/h-cub-1.jpg", "img/k-golden-retriever-2.jpg", "img/c-tech-bro-4.jpg", "img/c-silver-fox-6.jpg", "img/k-gym-tguy-6.jpg", "img/c-cub-3.jpg", "img/c-bear-5.jpg", "img/c-hot-dad-2.jpg", "img/d-cub-4.jpg", "img/k-gym-tguy-7.jpg", "img/c-tech-bro-5.jpg", "img/c-silver-fox-2.jpg", "img/q123.jpg"], "n": 77}, {"name": "doll", "blurb": "trans women, done up and glamorous", "group": "trans", "pres": ["fem"], "chips": ["dolls, t-boys and co", "8 faces"], "faces": ["img/k-doll-4.jpg", "img/k-doll-3.jpg", "img/k-doll-11.jpg", "img/k-doll-8.jpg", "img/k-doll-13.jpg", "img/k-doll-14.jpg", "img/k-doll-12.jpg", "img/k-doll-6.jpg"], "n": 8}, {"name": "t-boy", "blurb": "trans men and transmascs, easy swagger", "group": "trans", "pres": ["masc"], "chips": ["dolls, t-boys and co", "11 faces"], "faces": ["img/k-tboy-1.jpg", "img/k-tboy-2.jpg", "img/k-tboy-3.jpg", "img/k-tboy-14.jpg", "img/k-tboy-10.jpg", "img/k-tboy-11.jpg", "img/k-tboy-12.jpg", "img/k-tboy-13.jpg", "img/k-tboy-15.jpg", "img/g-tboy-2.jpg", "img/d-tboy-3.jpg"], "n": 11}, {"name": "gym t-bro", "blurb": "trans men who lift: a fitted tee, a gym bag, a lean frame", "group": "trans", "pres": ["masc"], "chips": ["dolls, t-boys and co", "7 faces"], "faces": ["img/k-gym-tguy-1.jpg", "img/k-gym-tguy-3.jpg", "img/k-gym-tguy-7.jpg", "img/k-gym-tguy-4.jpg", "img/k-gym-tguy-5.jpg", "img/k-gym-tguy-2.jpg", "img/k-gym-tguy-6.jpg"], "n": 7}, {"name": "tech transfem", "blurb": "trans women in tech, at home: a cardigan or a hoodie, a print tee or a dress, often glasses", "group": "trans", "pres": ["fem"], "chips": ["dolls, t-boys and co", "13 faces"], "faces": ["img/k-tech-transfem-20.jpg", "img/k-tech-transfem-22.jpg", "img/k-tech-transfem-27.jpg", "img/k-tech-transfem-29.jpg", "img/k-tech-transfem-25.jpg", "img/k-tech-transfem-30.jpg", "img/k-tech-transfem-23.jpg", "img/k-tech-transfem-21.jpg", "img/k-tech-transfem-14.jpg", "img/k-tech-transfem-6.jpg", "img/k-tech-transfem-28.jpg", "img/k-tech-transfem-26.jpg", "img/k-tech-transfem-10.jpg"], "n": 13}, {"name": "blåhaj girl", "blurb": "trans women, cozy and odd: cartoon tees, weird prints, the shark", "group": "trans", "pres": ["fem"], "chips": ["dolls, t-boys and co", "9 faces"], "faces": ["img/k-blahaj-girl-24.jpg", "img/k-blahaj-girl-20.jpg", "img/k-blahaj-girl-12.jpg", "img/k-blahaj-girl-17.jpg", "img/k-blahaj-girl-25.jpg", "img/k-blahaj-girl-27.jpg", "img/k-blahaj-girl-18.jpg", "img/k-blahaj-girl-23.jpg", "img/k-blahaj-girl-26.jpg"], "n": 9}, {"name": "e-girl", "blurb": "dyed front strands, winged liner, blush, a choker", "group": "alt", "pres": ["fem"], "chips": ["alt", "7 faces"], "faces": ["img/g-e-girl-1.jpg", "img/g-e-girl-2.jpg", "img/g-e-girl-7.jpg", "img/h-e-girl-1.jpg", "img/k-e-girl-4.jpg", "img/g-e-girl-6.jpg", "img/h-e-girl-2.jpg"], "n": 7}, {"name": "e-boy", "blurb": "curtain bangs, stripes under a tee, a chain", "group": "alt", "pres": ["masc"], "chips": ["alt", "7 faces"], "faces": ["img/e-e-boy-2.jpg", "img/e-e-boy-1.jpg", "img/e-e-boy-3.jpg", "img/g-e-boy-4.jpg", "img/g-e-boy-2.jpg", "img/g-e-boy-1.jpg", "img/g-e-boy-3.jpg"], "n": 7}, {"name": "goth", "blurb": "black lace and velvet, silver, sharp liner", "group": "alt", "pres": ["fem"], "chips": ["alt", "7 faces"], "faces": ["img/k-goth-6.jpg", "img/d-goth-6.jpg", "img/h-goth-2.jpg", "img/h-goth-1.jpg", "img/k-goth-1.jpg", "img/k-goth-5.jpg", "img/h-goth-3.jpg"], "n": 7}, {"name": "emo", "blurb": "a side fringe, eyeliner, a black band tee", "group": "alt", "pres": ["fem"], "chips": ["alt", "7 faces"], "faces": ["img/h-emo-4.jpg", "img/b-emo-4.jpg", "img/h-emo-2.jpg", "img/b-emo-2.jpg", "img/h-emo-3.jpg", "img/k-emo-4.jpg", "img/k-emo-3.jpg"], "n": 7}, {"name": "punk", "blurb": "patches, piercings, bleached or dyed hair", "group": "alt", "pres": ["andro", "masc"], "chips": ["alt", "7 faces"], "faces": ["img/b-punk-1.jpg", "img/c-punk-3.jpg", "img/b-punk-2.jpg", "img/h-punk-2.jpg", "img/h-punk-1.jpg", "img/k-punk-3.jpg", "img/h-punk-3.jpg"], "n": 7}, {"name": "grunge", "blurb": "flannel, a band tee, unbothered", "group": "alt", "pres": ["fem"], "chips": ["alt", "7 faces"], "faces": ["img/b-grunge-1.jpg", "img/h-grunge-2.jpg", "img/b-grunge-4.jpg", "img/h-grunge-5.jpg", "img/k-grunge-3.jpg", "img/h-grunge-4.jpg", "img/h-grunge-1.jpg"], "n": 7}, {"name": "skater", "blurb": "a loose tee, a cap or a beanie, scuffed", "group": "alt", "pres": ["fem", "masc"], "chips": ["alt", "7 faces"], "faces": ["img/e-skater-1.jpg", "img/e-skater-2.jpg", "img/h-skater-3.jpg", "img/b-skater-2.jpg", "img/h-skater-2.jpg", "img/h-skater-1.jpg", "img/h-skater-4.jpg"], "n": 7}, {"name": "raver", "blurb": "bright hair, glitter, neon", "group": "alt", "pres": ["fem", "masc"], "chips": ["alt", "8 faces"], "faces": ["img/e-raver-2.jpg", "img/e-raver-1.jpg", "img/h-raver-5.jpg", "img/b-raver-4.jpg", "img/h-raver-2.jpg", "img/h-raver-1.jpg", "img/h-raver-4.jpg", "img/c-raver-1.jpg"], "n": 8}, {"name": "witchy", "blurb": "velvet, moons and crystals, a lot of rings", "group": "alt", "pres": ["fem"], "chips": ["alt", "6 faces"], "faces": ["img/k-witchy-2.jpg", "img/d-witchy-1.jpg", "img/d-witchy-2.jpg", "img/b-witchy-2.jpg", "img/h-witchy-1.jpg", "img/d-witchy-4.jpg"], "n": 6}, {"name": "gender goblin", "blurb": "androgynous, chaotic, thrifted, delighted", "group": "alt", "pres": ["andro"], "chips": ["alt", "7 faces"], "faces": ["img/g-gender-goblin-1.jpg", "img/g-gender-goblin-4.jpg", "img/g-gender-goblin-2.jpg", "img/h-gender-goblin-4.jpg", "img/g-gender-goblin-3.jpg", "img/h-gender-goblin-2.jpg", "img/h-gender-goblin-1.jpg"], "n": 7}, {"name": "he/they mullet", "blurb": "a mullet, a little alt", "group": "alt", "pres": ["masc"], "chips": ["alt", "7 faces"], "faces": ["img/q098.jpg", "img/q114.jpg", "img/q197.jpg", "img/h-he-they-mullet-4.jpg", "img/q093.jpg", "img/h-he-they-mullet-2.jpg", "img/h-he-they-mullet-3.jpg"], "n": 7}, {"name": "cottagecore cutie", "blurb": "dungarees, mushrooms, a hand-knit cardigan", "group": "soft", "pres": ["fem"], "chips": ["soft and artsy", "7 faces"], "faces": ["img/d-cottagecore-1.jpg", "img/e-cottagecore-1.jpg", "img/d-cottagecore-2.jpg", "img/h-cottagecore-1.jpg", "img/b-cottagecore-2.jpg", "img/d-cottagecore-3.jpg", "img/b-cottagecore-6.jpg"], "n": 7}, {"name": "dark academia", "blurb": "tweed, a turtleneck, glasses", "group": "soft", "pres": ["fem", "masc"], "chips": ["soft and artsy", "7 faces"], "faces": ["img/b-dark-academia-1.jpg", "img/h-dark-academia-1.jpg", "img/b-dark-academia-2.jpg", "img/h-dark-academia-5.jpg", "img/h-dark-academia-4.jpg", "img/h-dark-academia-2.jpg", "img/b-dark-academia-4.jpg"], "n": 7}, {"name": "granola girl", "blurb": "outdoorsy, no makeup, sun-kissed", "group": "outdoors", "pres": ["fem"], "chips": ["outdoorsy and sporty", "6 faces"], "faces": ["img/e-granola-girl-1.jpg", "img/e-granola-girl-2.jpg", "img/e-granola-girl-4.jpg", "img/c-granola-girl-4.jpg", "img/c-granola-girl-3.jpg", "img/h-granola-girl-1.jpg"], "n": 6}, {"name": "gym rat", "blurb": "gym clothes, earbuds in, actually goes", "group": "outdoors", "pres": ["fem", "masc"], "chips": ["outdoorsy and sporty", "8 faces"], "faces": ["img/c-gym-rat-1.jpg", "img/c-gym-rat-4.jpg", "img/h-gym-rat-2.jpg", "img/q185.jpg", "img/q199.jpg", "img/h-gym-rat-1.jpg", "img/c-gym-rat-3.jpg", "img/c-gym-rat-5.jpg"], "n": 8}, {"name": "pilates princess", "blurb": "a slick bun, a matching set, gold hoops", "group": "outdoors", "pres": ["fem"], "chips": ["outdoorsy and sporty", "6 faces"], "faces": ["img/g-pilates-princess-1.jpg", "img/h-pilates-princess-1.jpg", "img/d-pilates-princess-3.jpg", "img/d-pilates-princess-6.jpg", "img/h-pilates-princess-2.jpg", "img/g-pilates-princess-2.jpg"], "n": 6}, {"name": "hot dad", "blurb": "35+, warm, scruffy, fit", "group": "characters", "pres": ["masc"], "chips": ["characters", "6 faces"], "faces": ["img/c-hot-dad-1.jpg", "img/c-hot-dad-3.jpg", "img/c-hot-dad-2.jpg", "img/q048.jpg", "img/c-hot-dad-5.jpg", "img/c-hot-dad-4.jpg"], "n": 6}, {"name": "hot mom", "blurb": "35+, warm, put-together, glowing", "group": "characters", "pres": ["fem"], "chips": ["characters", "6 faces"], "faces": ["img/d-hot-mom-1.jpg", "img/e-hot-mom-1.jpg", "img/d-hot-mom-2.jpg", "img/d-hot-mom-3.jpg", "img/d-hot-mom-4.jpg", "img/d-hot-mom-6.jpg"], "n": 6}, {"name": "suburban dad", "blurb": "35+, friendly, a little soft", "group": "characters", "pres": ["masc"], "chips": ["characters", "6 faces"], "faces": ["img/c-suburban-dad-1.jpg", "img/c-suburban-dad-2.jpg", "img/c-suburban-dad-4.jpg", "img/q137.jpg", "img/c-suburban-dad-3.jpg", "img/c-suburban-dad-5.jpg"], "n": 6}, {"name": "soccer mom", "blurb": "35+, friendly, practical, a fleece and a ponytail", "group": "characters", "pres": ["fem"], "chips": ["characters", "7 faces"], "faces": ["img/k-soccer-mom-1.jpg", "img/k-soccer-mom-5.jpg", "img/k-soccer-mom-9.jpg", "img/k-soccer-mom-10.jpg", "img/k-soccer-mom-3.jpg", "img/k-soccer-mom-4.jpg", "img/k-soccer-mom-6.jpg"], "n": 7}, {"name": "girl next door", "blurb": "pretty in an easy way: jeans and a tee, natural makeup, a warm smile", "group": "characters", "pres": ["fem"], "chips": ["characters", "6 faces"], "faces": ["img/k-girl-next-door-1.jpg", "img/k-girl-next-door-2.jpg", "img/k-girl-next-door-7.jpg", "img/k-girl-next-door-4.jpg", "img/k-girl-next-door-3.jpg", "img/k-girl-next-door-6.jpg"], "n": 6}, {"name": "golden retriever", "blurb": "sunny, easygoing, a hoodie, a big open grin", "group": "characters", "pres": ["masc"], "chips": ["characters", "7 faces"], "faces": ["img/k-golden-retriever-1.jpg", "img/k-golden-retriever-2.jpg", "img/k-golden-retriever-6.jpg", "img/k-golden-retriever-3.jpg", "img/k-golden-retriever-7.jpg", "img/k-golden-retriever-5.jpg", "img/k-golden-retriever-4.jpg"], "n": 7}, {"name": "tech bro", "blurb": "a fleece vest or a startup tee, earbuds in", "group": "characters", "pres": ["masc"], "chips": ["characters", "7 faces"], "faces": ["img/e-tech-bro-1.jpg", "img/e-tech-bro-2.jpg", "img/c-tech-bro-5.jpg", "img/h-tech-bro-1.jpg", "img/c-tech-bro-4.jpg", "img/c-tech-bro-2.jpg", "img/c-tech-bro-6.jpg"], "n": 7}, {"name": "office siren", "blurb": "sleek hair, narrow glasses, a sharp shirt, a dark lip", "group": "characters", "pres": ["fem"], "chips": ["characters", "6 faces"], "faces": ["img/e-office-siren-1.jpg", "img/d-office-siren-4.jpg", "img/k-office-siren-3.jpg", "img/d-office-siren-6.jpg", "img/h-office-siren-1.jpg", "img/d-office-siren-3.jpg"], "n": 6}, {"name": "twink", "blurb": "slim, smooth, styled, a little extra", "group": "gay-men", "pres": ["masc"], "chips": ["twinks, bears and co", "6 faces"], "faces": ["img/g-twink-2.jpg", "img/g-twink-5.jpg", "img/g-twink-6.jpg", "img/g-twink-1.jpg", "img/e-twink-1.jpg", "img/g-twink-3.jpg"], "n": 6}, {"name": "otter", "blurb": "slim, scruffy, a little hairy", "group": "gay-men", "pres": ["masc"], "chips": ["twinks, bears and co", "7 faces"], "faces": ["img/d-otter-1.jpg", "img/e-otter-1.jpg", "img/d-otter-2.jpg", "img/d-otter-5.jpg", "img/d-otter-6.jpg", "img/h-otter-1.jpg", "img/d-otter-4.jpg"], "n": 7}, {"name": "cub", "blurb": "stocky, bearded, sweet", "group": "gay-men", "pres": ["masc"], "chips": ["twinks, bears and co", "7 faces"], "faces": ["img/d-cub-1.jpg", "img/d-cub-3.jpg", "img/d-cub-2.jpg", "img/d-cub-4.jpg", "img/c-cub-3.jpg", "img/d-cub-5.jpg", "img/h-cub-1.jpg"], "n": 7}, {"name": "bear", "blurb": "big, burly, bearded, cuddly", "group": "gay-men", "pres": ["masc"], "chips": ["twinks, bears and co", "6 faces"], "faces": ["img/c-bear-1.jpg", "img/c-bear-2.jpg", "img/c-bear-3.jpg", "img/c-bear-6.jpg", "img/c-bear-5.jpg", "img/c-bear-4.jpg"], "n": 6}, {"name": "silver fox", "blurb": "older, silver hair, distinguished", "group": "gay-men", "pres": ["masc"], "chips": ["twinks, bears and co", "6 faces"], "faces": ["img/c-silver-fox-1.jpg", "img/c-silver-fox-2.jpg", "img/c-silver-fox-5.jpg", "img/c-silver-fox-4.jpg", "img/c-silver-fox-6.jpg", "img/c-silver-fox-3.jpg"], "n": 6}, {"name": "drag queen", "blurb": "a wig, a gown, a face beat for the gods", "group": "drag", "pres": ["fem"], "chips": ["drag", "6 faces"], "faces": ["img/c-drag-queen-1.jpg", "img/c-drag-queen-3.jpg", "img/c-drag-queen-5.jpg", "img/c-drag-queen-6.jpg", "img/c-drag-queen-4.jpg", "img/c-drag-queen-7.jpg"], "n": 6}, {"name": "drag king", "blurb": "a sharp look, a drawn-on mustache, swagger", "group": "drag", "pres": ["masc"], "chips": ["drag", "7 faces"], "faces": ["img/c-drag-king-2.jpg", "img/c-drag-king-5.jpg", "img/h-drag-king-2.jpg", "img/c-drag-king-7.jpg", "img/c-drag-king-6.jpg", "img/c-drag-king-1.jpg", "img/h-drag-king-1.jpg"], "n": 7}], GROUPS = [{"v": "expression", "label": "gender expression"}, {"v": "trans", "label": "dolls, t-boys and co"}, {"v": "alt", "label": "alt"}, {"v": "soft", "label": "soft and artsy"}, {"v": "outdoors", "label": "outdoorsy and sporty"}, {"v": "characters", "label": "characters"}, {"v": "gay-men", "label": "twinks, bears and co"}, {"v": "drag", "label": "drag"}], SET = "r16";
+'use strict';
+const $ = id => document.getElementById(id);
+let pres = '';
+const open = new Set();   // the cards showing every face, by type name
+// Review mode (types.html#review): for checking that each type's faces look the part. Every card is open, each face carries
+// its name, and a tap marks it "doesn't fit". The marks live in this browser only; the list at the bottom is plain text to
+// copy and send. Nothing on the page links here, so someone taking the test never meets it.
+const REVIEW = false, MK = 'faces-review-' + SET;
+const idOf = f => f.replace(/^.*\//, '').replace(/\.jpg$/, '');
+let marks = {};
+if (REVIEW) { try { marks = JSON.parse(localStorage.getItem(MK) || '{}') || {}; } catch (e) { marks = {}; } }
+const saveMarks = () => { try { localStorage.setItem(MK, JSON.stringify(marks)); } catch (e) {} };
+const listText = () => { const parts = TYPES.filter(t => (marks[t.name] || []).length).map(t => `${t.name}: ${marks[t.name].join(', ')}`);
+  return parts.length ? `faces ${SET}, doesn't fit: ` + parts.join('; ') : ''; };
+function revBar() { const n = Object.values(marks).reduce((a, v) => a + v.length, 0);
+  $('revn').textContent = n ? `${n} face${n === 1 ? '' : 's'} marked` : 'Nothing marked yet'; $('revcopy').disabled = $('revclear').disabled = !n;
+  $('revtext').hidden = !n; $('revtext').textContent = listText(); }
+function card(t) {
+  const all = REVIEW || open.has(t.name), shown = all ? t.faces : t.faces.slice(0, 3), no = marks[t.name] || [];
+  const face = f => REVIEW ? `<button type="button" class="rf${no.includes(idOf(f)) ? ' no' : ''}" data-t="${t.name}" data-id="${idOf(f)}" aria-pressed="${no.includes(idOf(f))}" aria-label="${idOf(f)}: mark as not fitting ${t.name}"><img src="${f}" alt="" loading="lazy"><span>${idOf(f)}</span></button>`
+                          : `<img src="${f}" alt="" loading="lazy">`;
+  return `<article class="t"><h2>${t.name}</h2><p>${t.blurb}</p>` +
+    `<div class="chips">${t.chips.map(c => `<span class="chip">${c}</span>`).join('')}</div>` +
+    (t.faces.length ? `<div class="faces">${shown.map(face).join('')}</div>` : '<p class="nofaces">no faces in the set wear this one yet</p>') +
+    (!REVIEW && t.faces.length > 3 ? `<button class="all" type="button" data-t="${t.name}" aria-expanded="${all}">${all ? 'show three' : `see all ${t.faces.length}`}</button>` : '') + '</article>';
+}
+function render() {
+  const q = $('q').value.trim().toLowerCase(), grp = $('group').value;
+  const shown = TYPES.filter(t => (!q || (t.name + ' ' + t.blurb).toLowerCase().includes(q)) && (!pres || t.pres.includes(pres)) && (!grp || t.group === grp));
+  $('grid').innerHTML = shown.length ? shown.map(card).join('') : '<p class="empty">No type matches all of those. Try fewer filters.</p>';
+  $('count').textContent = `${shown.length} of ${TYPES.length} types`;
+}
+document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+  pres = b.dataset.v; document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); render();
+});
+GROUPS.forEach(g => { const o = document.createElement('option'); o.value = g.v; o.textContent = g.label; $('group').append(o); });
+['q', 'group'].forEach(id => $(id).addEventListener('input', render));
+if (REVIEW) { document.body.classList.add('rev'); $('revnote').hidden = false; $('revbar').hidden = false; revBar();
+  $('revcopy').onclick = async e => { const b = e.currentTarget, text = listText();
+    try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+    catch (err) { const g = document.createRange(); g.selectNodeContents($('revtext')); getSelection().removeAllRanges(); getSelection().addRange(g); $('revtext').scrollIntoView({ block: 'center' }); b.textContent = 'Selected: copy it'; }
+    setTimeout(() => { b.textContent = 'Copy list'; }, 2500); };
+  $('revclear').onclick = e => { const b = e.currentTarget;
+    if (b.dataset.sure) { marks = {}; saveMarks(); delete b.dataset.sure; b.textContent = 'Clear'; render(); revBar(); }
+    else { b.dataset.sure = '1'; b.textContent = 'Tap again to clear'; setTimeout(() => { delete b.dataset.sure; b.textContent = 'Clear'; }, 4000); } }; }
+window.addEventListener('hashchange', () => location.reload());   // #review is read at load
+$('grid').addEventListener('click', e => {
+  const r = e.target.closest('button.rf');
+  if (r) { const t = r.dataset.t, id = r.dataset.id, cur = marks[t] || [];   // toggle in place: no re-render, so the page stays put
+    marks[t] = cur.includes(id) ? cur.filter(x => x !== id) : cur.concat(id); if (!marks[t].length) delete marks[t];
+    r.classList.toggle('no', !!(marks[t] || []).includes(id)); r.setAttribute('aria-pressed', String(r.classList.contains('no'))); saveMarks(); revBar(); return; }
+  const b = e.target.closest('button.all'); if (!b) return;
+  const t = b.dataset.t, y = b.closest('.t').getBoundingClientRect().top;
+  if (open.has(t)) open.delete(t); else open.add(t);
+  render();   // keep the card where it was on screen
+  const again = [...document.querySelectorAll('button.all')].find(x => x.dataset.t === t); if (again) { window.scrollBy(0, again.closest('.t').getBoundingClientRect().top - y); again.focus({ preventScroll: true }); } });
+render();
+</script>
+</body>
+</html>
